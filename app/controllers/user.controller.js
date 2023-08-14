@@ -65,6 +65,19 @@ exports.session = async (req, res) => {
             return res.status(401).json({ success: false });
         }
 
+        const sessionExists = await db.Session.findOne({
+            where: {
+                userId: user.id
+            }
+        });
+
+        if (sessionExists) {
+            user.dataValues.token = sessionExists.sessionId;
+            delete user.dataValues.password;
+
+            return res.json(user);
+        }
+
         const newToken = await db.Session.create();
         newToken.setUser(user);
         await newToken.save();
@@ -74,6 +87,7 @@ exports.session = async (req, res) => {
 
         return res.json(user);
     } catch (err) {
+        console.error(err);
         return res.status(401).json({ success: false });
     }
 };

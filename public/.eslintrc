@@ -1,0 +1,35 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react-hooks/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 8
+    },
+    "env": {
+        "node": true,
+        "es6": true,
+        "mocha": true
+    },
+    "rules": {
+        "no-console": "off",
+        "guard-for-in": "error",
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-loop-func": "error",
+        "no-sync": "error",
+        "no-template-curly-in-string": "error",
+        "block-scoped-var": "error",
+        "dot-notation": "error",
+        "curly": "error",
+        "indent": 2
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint",
+    ]
+}
