@@ -12,7 +12,7 @@ import { MapIcon } from './map.icon.service';
 import { Area, CreatePinProps, mapServiceApi } from './map.service.api';
 
 
-interface MapContainerProps {
+export interface MapContainerProps {
     headerHeight: number;
     windowSize: WindowSizeProps;
     pinColor: string;
@@ -73,7 +73,6 @@ class Map extends Component<MapContainerProps> {
     }
 
     async createMaker(layer: L.Marker<any> | undefined) {
-        console.log(this.color);
         const data = await mapServiceApi.createPin({
             color: this.color,
             title: 'pin test',
@@ -137,6 +136,11 @@ class Map extends Component<MapContainerProps> {
         if (this.map) {
             this.map.fitBounds(this.drawnItems.getBounds());
         }
+    }
+
+    async changeColor(color: string) {
+        this.color = color;
+        this.refreshControls();
     }
 
     async updateAreaInfo(layer: L.Polygon<any> | L.Layer | L.Marker | any) {
