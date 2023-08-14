@@ -27,6 +27,8 @@ sequelize.authenticate()
 
         app.listen(3000);
 
+        exports = module.exports = app;
+
         console.log("Connection established!");
     })
     .catch((err) => {

@@ -17,7 +17,6 @@ const bcrypt = require("bcryptjs");
 /**
  *
  * @param {import('sequelize').Sequelize} sequelize
- * @param {import('sequelize')} Sequelize
  * @returns
  */
 module.exports = function User(sequelize) {

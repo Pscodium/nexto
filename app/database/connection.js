@@ -2,6 +2,7 @@ const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 const User = require('./models/user');
 const Session = require('./models/session');
+const Map = require('./models/map');
 
 dotenv.config();
 
@@ -13,7 +14,8 @@ const sequelize = new Sequelize(String(process.env.DB_NAME), String(process.env.
 const db = {
     sequelize: sequelize,
     User: User(sequelize),
-    Session: Session(sequelize)
+    Session: Session(sequelize),
+    Map: Map(sequelize)
 };
 
 Object.keys(db).forEach(modelName => {
