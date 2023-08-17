@@ -13,8 +13,8 @@ class MapIconService {
 
         const customIcon = new L.Icon({
             iconUrl: svgUrl,
-            iconSize: [36, 48],
-            iconAnchor: [16, 37],
+            iconSize: [25, 34],
+            iconAnchor: [12, 21],
             popupAnchor: [-100, -55]
         });
         return customIcon;
