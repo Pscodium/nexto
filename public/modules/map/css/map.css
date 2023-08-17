@@ -1,0 +1,9 @@
+.leaflet-draw-edit-marker, .leaflet-draw-drag-marker {
+    background-color: #3498db; /* Cor de fundo */
+    border: 2px solid #fff; /* Borda branca */
+    border-radius: 50%; /* Borda arredondada */
+    width: 10px; /* Largura */
+    height: 10px; /* Altura */
+    margin: -6px 0 0 -6px; /* Alinhar o marcador corretamente */
+    cursor: pointer; /* Cursor de ponteiro */
+  }

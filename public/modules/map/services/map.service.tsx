@@ -11,6 +11,7 @@ import { WindowSizeProps } from '../../../components/hooks/useWindowSize';
 import { MapIcon } from './map.icon.service';
 import { Area, CreatePinProps, mapServiceApi } from './map.service.api';
 
+import '../css/map.css';
 
 export interface MapContainerProps {
     headerHeight: number;
@@ -23,7 +24,7 @@ class Map extends Component<MapContainerProps> {
     public height: number;
     private drawnItems: L.FeatureGroup<any>;
     private canDrawPolygon: boolean;
-    private drawControl!: L.Control;
+    private drawControl!: L.Control | any;
     public windowSize: WindowSizeProps;
     private markers: Array<L.Marker<any> | any> = [];
     private initialized: boolean = false;
@@ -116,6 +117,7 @@ class Map extends Component<MapContainerProps> {
         const data = await mapServiceApi.getAllMarkers();
 
         for (const pin of data) {
+            this.changeColor(pin.color);
             const draw = this.createMarkerFromPosition([pin.latitude, pin.longitude]) as any;
             if (pin.area) {
                 const polygon = this.createPolygonFromGeoJSON(pin.area);
@@ -150,7 +152,7 @@ class Map extends Component<MapContainerProps> {
             if (this.markers[i].area && this.markers[i].area === layer) {
                 this.drawnItems.removeLayer(this.markers[i]);
                 const markerId = this.markers[i].markerId;
-                layer._latlngs[0].forEach(function (position) {
+                layer._latlngs[0].forEach(function (position: any) {
                     coordinates.push([position.lng, position.lat]);
                 });
 
@@ -213,6 +215,16 @@ class Map extends Component<MapContainerProps> {
             this.refreshControls();
         });
 
+        this.map.on(L.Draw.Event.DRAWSTART, (e: any) => {
+            if (e.layerType === 'polygon') {
+                const lat = this.markers[this.markers.length - 1]._latlng.lat;
+                const lng = this.markers[this.markers.length - 1]._latlng.lng;
+                const latLng = L.latLng(lat, lng);
+
+                this.drawControl._toolbars.draw._modes.polygon.handler.addVertex(latLng);
+            }
+        });
+
         this.map.on(L.Draw.Event.EDITED, (e: any) => {
             Object.keys(e.layers._layers).forEach((layer: any) => {
                 const item = e.layers._layers[layer];
@@ -231,6 +243,7 @@ class Map extends Component<MapContainerProps> {
                 if (item.area) {
                     this.drawnItems.removeLayer(item.area);
                 }
+                this.changeColor(item.color);
                 this.updateMarkerInfo(item);
                 this.drawnItems.removeLayer(item);
             });
