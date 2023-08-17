@@ -1,4 +1,4 @@
-import api from "../../../lib/api";
+import { api } from "../../../lib/api";
 
 type Coordinates = [number, number][]
 
@@ -32,7 +32,7 @@ interface UpdateAreaProps {
 
 class MapServiceApi {
     async createPin({ color, latitude, longitude, title, area}: CreatePinProps): Promise<CreatePinProps> {
-        const res = await api.post('/api/map/pin/create', {
+        const res = await api.api.post('/api/map/pin/create', {
             title: title,
             color: color,
             latitude: latitude,
@@ -48,7 +48,7 @@ class MapServiceApi {
     }
 
     async getAllMarkers(): Promise<CreatePinProps[]> {
-        const res = await api.get('/api/map/pins');
+        const res = await api.api.get('/api/map/pins');
 
         if (res.status !== 200) {
             throw new Error("Unexpected error creating map pin");
@@ -58,7 +58,7 @@ class MapServiceApi {
     }
 
     async insertPolygonInMarker({ coordinates, markerId }: UpdateAreaProps) {
-        const res = await api.put('/api/map/pin/'+ markerId, {
+        const res = await api.api.put('/api/map/pin/'+ markerId, {
             area: {
                 type: 'Polygon',
                 coordinates: coordinates,
@@ -73,7 +73,7 @@ class MapServiceApi {
     }
 
     async updateMarkerPosition({ latitude, longitude, id }: UpdatePinProps) {
-        const res = await api.put('/api/map/pin/'+ id, {
+        const res = await api.api.put('/api/map/pin/'+ id, {
             latitude: latitude,
             longitude: longitude,
             area: null
@@ -87,7 +87,7 @@ class MapServiceApi {
     }
 
     async deleteMarker(markerId: number) {
-        const res = await api.delete('api/map/pin/'+ markerId);
+        const res = await api.api.delete('api/map/pin/'+ markerId);
 
         if (res.status !== 200) {
             throw new Error("Unexpected error creating map pin");
