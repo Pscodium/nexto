@@ -1,19 +1,29 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
-const api = axios.create({
-    baseURL: "http://localhost:3000",
-});
+class Api {
+    public api: AxiosInstance;
 
-api.interceptors.request.use(async config => {
-    const token = "68e24865-8b3b-41a0-abca-fa0b89359354";
-
-    config.headers["Content-Type"] = "application/json";
-
-    if (token) {
-        config.headers.Authorization =  `Bearer ${token}`;
+    constructor() {
+        this.api = axios.create({
+            baseURL: "http://localhost:3000",
+        });
+        this.initialHeaders();
     }
 
-    return config;
-});
+    private async initialHeaders() {
+        this.api.interceptors.request.use(async config => {
+            const token = "afe3b1e8-df4b-498e-a036-f06f4597e945";
 
-export default api;
+            config.headers["Content-Type"] = "application/json";
+
+            if (token) {
+                config.headers.Authorization =  `Bearer ${token}`;
+            }
+
+            return config;
+        });
+
+    }
+}
+
+export const api = new Api();
