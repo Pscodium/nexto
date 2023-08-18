@@ -8,7 +8,7 @@ import { BubbleButton } from './bubbleButton';
 
 import js from 'highlight.js/lib/languages/javascript';
 import 'highlight.js/styles/tokyo-night-dark.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 lowlight.registerLanguage('js', js);
 
@@ -37,7 +37,7 @@ export function Editor() {
     return (
         <>
             <EditorContent
-                className='max-w-[700px] mx-auto pt-16 prose prose-violet'
+                className='max-w-full min-h-full mx-auto p-20 prose prose-violet'
                 editor={editor}
             />
             {editor && (
