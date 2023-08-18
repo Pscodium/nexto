@@ -11,7 +11,10 @@ import {
 } from "../../../components/ui/card";
 import { Input } from "../../../components/ui/input";
 import { Label } from "../../../components/ui/label";
+import { useToast } from '../../../components/ui/use-toast';
+import { Toaster } from '../../../components/ui/toaster';
 import { BiArrowBack } from 'react-icons/bi';
+import { useNavigate } from 'react-router-dom';
 import { authServiceApi } from './auth.service.api';
 import '../css/loading.css';
 
@@ -26,6 +29,8 @@ interface InputsProps {
 
 export default function RegisterComponent(props: RegisterComponentProps) {
 
+    const { toast } = useToast();
+    const navigate = useNavigate();
     const [firstStep, setFirstStep] = useState(true);
     const [cantPassStep, setCantPassStep] = useState(false);
     const [completedEmail, setCompletedEmail] = useState(false);
@@ -127,16 +132,38 @@ export default function RegisterComponent(props: RegisterComponentProps) {
         }
         setCantCompletedRegistration(false);
         setLoading(true);
-        const response = await authServiceApi.register({
-            email: inputs.email,
-            password: inputs.password,
-            firstName: inputs.firstName,
-            lastName: inputs.lastName
-        });
-        if (response) {
-            window.location.href = '/login';
+        try {
+            const response = await authServiceApi.register({
+                email: inputs.email,
+                password: inputs.password,
+                firstName: inputs.firstName,
+                lastName: inputs.lastName
+            });
+            if (response) {
+                navigate('/login');
+                setLoading(false);
+            }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
             setLoading(false);
-            // Complete registration
+            if (err.response.status === 409) {
+                setCompletedEmail(false);
+                setFirstStep(true);
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! Something went wrong.",
+                    description: "Email already in use",
+                    className: "outline-none bg-red-600 text-slate-200",
+                });
+                return;
+            }
+            toast({
+                variant: "destructive",
+                title: "Uh oh! Something went wrong.",
+                description: "Unexpected error on registration. Please try again...",
+                className: "outline-none bg-red-600 text-slate-200",
+            });
+            console.error(err);
         }
     }
 
@@ -170,83 +197,99 @@ export default function RegisterComponent(props: RegisterComponentProps) {
         setPasswordValid(validatePassword(password));
     }
 
+    function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
+        if (!firstStep && event.key === 'Enter') {
+            onCompleteRegistration();
+        }
+
+        if (event.key === 'Enter') {
+            onClickSubmit();
+        }
+
+    }
+
     return (
         <>
             <div {...props}>
                 {firstStep ?
-                    <Card className='bg-slate-50 shadow-sm shadow-black/20'>
-                        <CardHeader className="space-y-1">
-                            <CardTitle className="text-2xl">Create an account</CardTitle>
-                            <CardDescription>
-                                Enter your email below to create your account
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="grid gap-4">
-                            <div className="grid grid-cols-2 gap-6">
-                                <Button variant="outline">
-                                    <Icons.gitHub className="mr-2 h-4 w-4" />
-                                    Github
-                                </Button>
-                                <Button variant="outline">
-                                    <Icons.google className="mr-2 h-4 w-4" />
-                                    Google
-                                </Button>
-                            </div>
-                            <div className="relative">
-                                <div className="absolute inset-0 flex items-center">
-                                    <span className="w-full border-t" />
+                    <>
+                        <Card className='bg-slate-50 shadow-sm shadow-black/20'>
+                            <CardHeader className="space-y-1">
+                                <CardTitle className="text-2xl">Create an account</CardTitle>
+                                <CardDescription>
+                                    Enter your email below to create your account
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="grid gap-4">
+                                <div className="grid grid-cols-2 gap-6">
+                                    <Button variant="outline">
+                                        <Icons.gitHub className="mr-2 h-4 w-4" />
+                                        Github
+                                    </Button>
+                                    <Button variant="outline">
+                                        <Icons.google className="mr-2 h-4 w-4" />
+                                        Google
+                                    </Button>
                                 </div>
-                                <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-background px-2 text-muted-foreground">
-                                        Or continue with
-                                    </span>
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <span className="w-full border-t" />
+                                    </div>
+                                    <div className="relative flex justify-center text-xs uppercase">
+                                        <span className="bg-background px-2 text-muted-foreground">
+                                            Or continue with
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="grid gap-2">
-                                <div className='flex flex-row justify-between'>
-                                    <Label htmlFor="email">Email</Label>
-                                    {!emailValid && (
-                                        <Label className='text-red-500 text-xs'>Enter a valid email address</Label>
+                                <div className="grid gap-2">
+                                    <div className='flex flex-row justify-between'>
+                                        <Label htmlFor="email">Email</Label>
+                                        {!emailValid && (
+                                            <Label className='text-red-500 text-xs'>Enter a valid email address</Label>
+                                        )}
+                                    </div>
+                                    <Input
+                                        id="email"
+                                        className={!completedEmail || cantPassStep || !emailValid ? 'border-red-500' : ''}
+                                        type="email"
+                                        placeholder="m@example.com"
+                                        value={inputs.email}
+                                        onKeyDown={handleKeyPress}
+                                        onChange={(e) => handleChangeEmail(e.target.value)}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <div className='flex flex-row'>
+                                        <Label htmlFor="password">Password</Label>
+                                    </div>
+                                    <Input
+                                        id="password"
+                                        className={!completedPassword || cantPassStep || !passwordValid ? 'border-red-500' : ''}
+                                        type="password"
+                                        placeholder='•••••••••••'
+                                        value={inputs.password}
+                                        onKeyDown={handleKeyPress}
+                                        onChange={(e) => handleChangePassword(e.target.value)}
+                                    />
+                                    {!passwordValid && (
+                                        <Label className='text-red-500 text-xs'>Must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one digit, and one special character</Label>
                                     )}
                                 </div>
-                                <Input
-                                    id="email"
-                                    className={!completedEmail || cantPassStep || !emailValid ? 'border-red-500' : ''}
-                                    type="email"
-                                    placeholder="m@example.com"
-                                    value={inputs.email}
-                                    onChange={(e) => handleChangeEmail(e.target.value)}
-                                />
-                            </div>
-                            <div className="grid gap-2">
-                                <div className='flex flex-row'>
-                                    <Label htmlFor="password">Password</Label>
-                                </div>
-                                <Input
-                                    id="password"
-                                    className={!completedPassword || cantPassStep || !passwordValid ? 'border-red-500' : ''}
-                                    type="password"
-                                    placeholder='•••••••••••'
-                                    value={inputs.password}
-                                    onChange={(e) => handleChangePassword(e.target.value)}
-                                />
-                                {!passwordValid && (
-                                    <Label className='text-red-500 text-xs'>Must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one digit, and one special character</Label>
-                                )}
-                            </div>
-                        </CardContent>
-                        <CardFooter>
-                            <Button onClick={onClickSubmit} className="w-full">Continue Registration</Button>
-                        </CardFooter>
-                    </Card>
+                            </CardContent>
+                            <CardFooter>
+                                <Button onClick={onClickSubmit} className="w-full">Continue Registration</Button>
+                            </CardFooter>
+                        </Card>
+                        <Toaster />
+                    </>
                     :
                     <>
-                        {loading?
+                        {loading ?
                             <div className='bg-slate-200/50 h-[100%] w-[100%] absolute top-0 right-0 items-center justify-center flex'>
                                 <svg className='loading' viewBox="25 25 50 50">
                                     <circle className='circle' cx="50" cy="50" r="20"></circle>
                                 </svg>
-                            </div>: null
+                            </div> : null
                         }
 
                         <Card className='w-[100%] bg-slate-50 shadow-sm shadow-black/20'>
@@ -271,6 +314,7 @@ export default function RegisterComponent(props: RegisterComponentProps) {
                                         type="text"
                                         placeholder="Your name"
                                         value={inputs.firstName}
+                                        onKeyDown={handleKeyPress}
                                         onChange={(e) => setInputs({ ...inputs, firstName: e.target.value })}
                                     />
                                 </div>
@@ -282,6 +326,7 @@ export default function RegisterComponent(props: RegisterComponentProps) {
                                         type="text"
                                         placeholder='Your last name'
                                         value={inputs.lastName}
+                                        onKeyDown={handleKeyPress}
                                         onChange={(e) => setInputs({ ...inputs, lastName: e.target.value })}
                                     />
                                 </div>
