@@ -208,6 +208,10 @@ export default function RegisterComponent(props: RegisterComponentProps) {
 
     }
 
+    function onClickLogin() {
+        navigate('/login');
+    }
+
     return (
         <>
             <div {...props}>
@@ -337,6 +341,9 @@ export default function RegisterComponent(props: RegisterComponentProps) {
                         </Card>
                     </>
                 }
+                <Button className="items-center justify-center flex h-[30px]" onClick={onClickLogin}>
+                    <Label className="self-center cursor-pointer text-zinc-700 underline">if you already have an account, login</Label>
+                </Button>
             </div>
         </>
     );

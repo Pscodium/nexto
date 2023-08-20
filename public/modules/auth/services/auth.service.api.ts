@@ -36,6 +36,23 @@ class AuthServiceApi {
 
         return res.data;
     }
+
+    async login(email: string | undefined, password: string | undefined ) {
+        const res = await api.api.post('/session/login', {
+            email: email,
+            password: password
+        });
+
+        if (res.status !== 200) {
+            throw new Error("Unexpected error logging account");
+        }
+
+        if (res.data.token) {
+            await api.setToken(res.data.token);
+        }
+
+        return res.data;
+    }
 }
 
 export { InvalidEmail };
