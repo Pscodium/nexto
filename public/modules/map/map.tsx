@@ -3,12 +3,14 @@ import MapHeader from "./map.header";
 import { useWindowSize } from "../../components/hooks/useWindowSize";
 import Map from "./services/map.service";
 import { SliderPicker } from 'react-color';
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
     const [pinColor, setPinColor] = useState('#00ff00');
     const mapRef = useRef<Map>(null);
     const windowSize = useWindowSize();
     const headerSize = 60;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const map = mapRef.current;
@@ -16,6 +18,10 @@ export default function HomePage() {
             map.changeColor(pinColor);
         }
     }, [pinColor]);
+
+    function goToLoginPage() {
+        navigate('/login');
+    }
 
     return (
         <>
@@ -25,7 +31,7 @@ export default function HomePage() {
                     <SliderPicker color={pinColor} className="h-[10px] w-[100%]" onChangeComplete={(color) => setPinColor(color.hex)} />
                 </div>
                 <div className=" bg-zinc-200 flex w-[60vw] h-[100%] justify-center items-center">
-                    <Map headerHeight={headerSize} windowSize={windowSize} pinColor={pinColor} ref={mapRef} />
+                    <Map headerHeight={headerSize} windowSize={windowSize} pinColor={pinColor} ref={mapRef} goToLoginPage={goToLoginPage} />
                 </div>
                 <div className="bg-blue-300 flex w-[20vw] h-[100%]">Something there</div>
             </div>

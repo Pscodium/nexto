@@ -39,6 +39,27 @@ exports.login = async (req, res) => {
 
         const token = jwt.sign({ id: user.id }, String(process.env.JWT_SECRET_KEY), { expiresIn: '1d' });
 
+        const sessionExists = await db.Session.findOne({
+            where: {
+                userId: user.id,
+            }
+        });
+        if (!sessionExists) {
+            const newToken = await db.Session.create({
+                jwt: token
+            });
+            newToken.setUser(user);
+            await newToken.save();
+        } else {
+            await db.Session.update({
+                jwt: token
+            },{
+                where: {
+                    userId: user.id
+                }
+            });
+        }
+
         user.dataValues.token = token;
         delete user.dataValues.password;
 
@@ -72,13 +93,22 @@ exports.session = async (req, res) => {
         });
 
         if (sessionExists) {
+            await db.Session.update({
+                jwt: null
+            }, {
+                where: {
+                    userId: user.id
+                }
+            });
             user.dataValues.token = sessionExists.sessionId;
             delete user.dataValues.password;
 
             return res.json(user);
         }
 
-        const newToken = await db.Session.create();
+        const newToken = await db.Session.create({
+            jwt: null
+        });
         newToken.setUser(user);
         await newToken.save();
 
@@ -92,6 +122,39 @@ exports.session = async (req, res) => {
     }
 };
 
-exports.test = async (req, res) => {
-    return res.json({ user: req.user, userId: req.userId });
+exports.getUserData = async (req, res) => {
+    try {
+        const user = await db.User.findOne({
+            where: {
+                id: req.userId
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ success: false });
+        }
+
+        const session = await db.Session.findOne({
+            where: {
+                userId: req.userId
+            }
+        });
+
+        if (!session) {
+            return res.status(403).json({ success: false });
+        }
+
+        user.dataValues.token = session.sessionId;
+
+        if (session.jwt) {
+            user.dataValues.token = session.jwt;
+        }
+
+        delete user.dataValues.password;
+
+        return res.json(user);
+    } catch (err) {
+        console.error(err);
+        return res.status(401).json({ success: false });
+    }
 };

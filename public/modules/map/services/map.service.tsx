@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-var */
@@ -12,11 +13,13 @@ import { MapIcon } from './map.icon.service';
 import { Area, CreatePinProps, mapServiceApi } from './map.service.api';
 
 import '../css/map.css';
+import { InvalidBearerToken } from '../../../lib/api';
 
 export interface MapContainerProps {
     headerHeight: number;
     windowSize: WindowSizeProps;
     pinColor: string;
+    goToLoginPage: () => void;
 }
 
 class Map extends Component<MapContainerProps> {
@@ -29,6 +32,7 @@ class Map extends Component<MapContainerProps> {
     private markers: Array<L.Marker<any> | any> = [];
     private initialized: boolean = false;
     private color: string;
+    public goToLoginPage: () => void;
 
     constructor(props: MapContainerProps) {
         super(props);
@@ -38,6 +42,7 @@ class Map extends Component<MapContainerProps> {
         this.canDrawPolygon = false;
         this.height = props.windowSize.height ? props.windowSize.height - props.headerHeight : window.innerHeight - props.headerHeight;
         this.initialized = false;
+        this.goToLoginPage = props.goToLoginPage;
     }
 
     createPolygonFromGeoJSON(geoJSON: Area) {
@@ -114,24 +119,32 @@ class Map extends Component<MapContainerProps> {
     }
 
     async getMarkers() {
-        const data = await mapServiceApi.getAllMarkers();
+        try {
+            const data = await mapServiceApi.getAllMarkers();
 
-        for (const pin of data) {
-            this.changeColor(pin.color);
-            const draw = this.createMarkerFromPosition([pin.latitude, pin.longitude]) as any;
-            if (pin.area) {
-                const polygon = this.createPolygonFromGeoJSON(pin.area);
-                draw.area = polygon;
-                this.drawnItems.addLayer(polygon as L.Layer);
+            for (const pin of data) {
+                this.changeColor(pin.color);
+                const draw = this.createMarkerFromPosition([pin.latitude, pin.longitude]) as any;
+                if (pin.area) {
+                    const polygon = this.createPolygonFromGeoJSON(pin.area);
+                    draw.area = polygon;
+                    this.drawnItems.addLayer(polygon as L.Layer);
+                }
+                draw.markerId = pin.id;
+                draw.color = pin.color;
+                this.drawnItems.addLayer(draw as L.Layer);
+                this.markers.push(draw);
+                this.canDrawPolygon = false;
+                this.centerMap();
+                this.refreshControls();
             }
-            draw.markerId = pin.id;
-            draw.color = pin.color;
-            this.drawnItems.addLayer(draw as L.Layer);
-            this.markers.push(draw);
-            this.canDrawPolygon = false;
-            this.centerMap();
-            this.refreshControls();
+        } catch (err) {
+            console.error(err);
+            if (err instanceof InvalidBearerToken) {
+                this.goToLoginPage();
+            }
         }
+
     }
 
     centerMap() {
@@ -234,7 +247,6 @@ class Map extends Component<MapContainerProps> {
                     this.refreshControls();
                     for (let i = 0; i < this.markers.length; i++) {
                         if (this.markers[i].area === item) {
-                            console.log(this.markers[i]);
                             this.drawnItems.removeLayer(this.markers[i]);
                         }
                     }

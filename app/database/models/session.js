@@ -4,6 +4,7 @@ const { DataTypes } = require("sequelize");
  * @typedef Session
  * @type {object}
  * @property {number} sessionId
+ * @property {string} jwt
  * @property {number} userId
  */
 
@@ -19,6 +20,10 @@ module.exports = function Session(sequelize) {
             type: DataTypes.UUID,
             defaultValue: sequelize.Sequelize.UUIDV4,
             primaryKey: true
+        },
+        jwt: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         userId: {
             type: DataTypes.INTEGER,
