@@ -8,6 +8,7 @@ import 'leaflet';
 import 'leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet/dist/leaflet.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import { WindowSizeProps } from '../../../components/hooks/useWindowSize';
 import { MapIcon } from './map.icon.service';
 import { Area, CreatePinProps, mapServiceApi } from './map.service.api';
@@ -20,6 +21,11 @@ export interface MapContainerProps {
     windowSize: WindowSizeProps;
     pinColor: string;
     goToLoginPage: () => void;
+    openColorPicker: (openColorPicker: boolean) => void;
+}
+
+interface StateProps {
+    openPalette: boolean;
 }
 
 class Map extends Component<MapContainerProps> {
@@ -33,6 +39,11 @@ class Map extends Component<MapContainerProps> {
     private initialized: boolean = false;
     private color: string;
     public goToLoginPage: () => void;
+    public openColorPicker: (openColorPicker: boolean) => void;
+    public palettePosition: DOMRect | undefined;
+    public button!: HTMLButtonElement;
+    public customButton!: L.Control;
+    public state: StateProps;
 
     constructor(props: MapContainerProps) {
         super(props);
@@ -43,6 +54,10 @@ class Map extends Component<MapContainerProps> {
         this.height = props.windowSize.height ? props.windowSize.height - props.headerHeight : window.innerHeight - props.headerHeight;
         this.initialized = false;
         this.goToLoginPage = props.goToLoginPage;
+        this.openColorPicker = props.openColorPicker;
+        this.state = {
+            openPalette: false
+        };
     }
 
     createPolygonFromGeoJSON(geoJSON: Area) {
@@ -322,6 +337,26 @@ class Map extends Component<MapContainerProps> {
         this.map.addControl(this.drawControl);
     }
 
+    addColorButton() {
+        this.customButton = new L.Control({ position: 'topleft' });
+
+        this.customButton.onAdd = () => {
+            this.button = L.DomUtil.create('button', 'leaflet-draw-toolbar leaflet-bar leaflet-draw-edit-edit bg-white h-[34px] w-[34px] cursor-pointer hover:bg-[#f4f4f4]');
+
+            this.button.innerHTML = '<i class="fas fa-palette custom-icon"></i>';
+            this.button.onclick = () => this.handleClickColorPicker(this.button);
+            return this.button;
+        };
+
+        this.customButton.addTo(this.map);
+    }
+
+    handleClickColorPicker(button: HTMLButtonElement) {
+        this.button = button;
+        this.state.openPalette = !this.state.openPalette;
+        this.openColorPicker(this.state.openPalette);
+    }
+
     componentDidMount() {
         if (typeof window === 'object') {
             const center = [51.505, -0.09] as LatLngExpression;
@@ -338,6 +373,7 @@ class Map extends Component<MapContainerProps> {
 
             this.map.addLayer(this.drawnItems);
 
+            this.addColorButton();
             this.mapEvents();
             this.refreshControls();
             if (!this.initialized) {
