@@ -1,10 +1,11 @@
-import { api } from "../../../lib/api";
+import { Api } from "../../../lib/api";
 
 interface RegisterProps {
     email: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
     password: string | undefined;
+    nickname: string | undefined;
 }
 
 class ExtendableError extends Error {
@@ -17,13 +18,14 @@ class ExtendableError extends Error {
 
 class InvalidEmail extends ExtendableError {}
 
-class AuthServiceApi {
-    async register({ email, firstName, lastName, password }: RegisterProps) {
-        const res = await api.api.post('/register', {
+class AuthServiceApi extends Api {
+    async register({ email, firstName, lastName, password, nickname }: RegisterProps) {
+        const res = await this.api.post('/register', {
             email: email,
             password: password,
             firstName: firstName,
             lastName: lastName,
+            nickname: nickname
         });
 
         if (res.status === 409) {
@@ -38,7 +40,7 @@ class AuthServiceApi {
     }
 
     async login(email: string | undefined, password: string | undefined ) {
-        const res = await api.api.post('/session/login', {
+        const res = await this.api.post('/session/login', {
             email: email,
             password: password
         });
@@ -48,7 +50,7 @@ class AuthServiceApi {
         }
 
         if (res.data.token) {
-            await api.setToken(res.data.token);
+            await this.setToken(res.data.token);
         }
 
         return res.data;

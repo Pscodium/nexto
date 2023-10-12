@@ -1,11 +1,14 @@
 const { DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
-
+const ENUMS = require("../../utils/enums/index")
 
 /**
  * @typedef User
  * @type {object}
  * @property {number} id
+ * @property {string} nickname
+ * @property {string} external_id
+ * @property {ENUMS.UserRoles} role
  * @property {boolean} isActivated
  * @property {string} email
  * @property {string} name
@@ -25,6 +28,19 @@ module.exports = function User(sequelize) {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
+        },
+        nickname: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        external_id: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        role: {
+            type: DataTypes.ENUM(ENUMS.values(ENUMS.UserRoles)),
+            defaultValue: ENUMS.UserRoles.DEFAULT,
+            allowNull: true
         },
         firstName: {
             type: DataTypes.STRING,

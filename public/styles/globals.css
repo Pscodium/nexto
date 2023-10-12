@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 * {
   font-family: museo_sans500, arial, "Times New Roman", serif;
 }
@@ -50,4 +49,27 @@ h1, h2, h3, h4, h5, h6 {
   font-family: inherit;
   padding: 0;
   margin: 0;
+}
+
+/* Scroll bar stylings */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--lightestgrey);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  display: none;
+  border-radius: 5px;
+}
+
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

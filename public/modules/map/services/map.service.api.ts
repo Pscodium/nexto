@@ -1,4 +1,4 @@
-import { api } from "../../../lib/api";
+import { Api } from "../../../lib/api";
 
 type Coordinates = [number, number][]
 
@@ -30,10 +30,10 @@ interface UpdateAreaProps {
     markerId: number;
 }
 
-class MapServiceApi {
+class MapServiceApi extends Api {
     async createPin({ color, latitude, longitude, title, area}: CreatePinProps): Promise<CreatePinProps> {
-        await api.getToken();
-        const res = await api.api.post('/api/map/pin/create', {
+        await this.getToken();
+        const res = await this.api.post('/api/map/pin/create', {
             title: title,
             color: color,
             latitude: latitude,
@@ -49,8 +49,8 @@ class MapServiceApi {
     }
 
     async getAllMarkers(): Promise<CreatePinProps[]> {
-        await api.getToken();
-        const res = await api.api.get('/api/map/pins');
+        await this.getToken();
+        const res = await this.api.get('/api/map/pins');
 
         if (res.status !== 200) {
             throw new Error("Unexpected error creating map pin");
@@ -60,8 +60,8 @@ class MapServiceApi {
     }
 
     async insertPolygonInMarker({ coordinates, markerId }: UpdateAreaProps) {
-        await api.getToken();
-        const res = await api.api.put('/api/map/pin/'+ markerId, {
+        await this.getToken();
+        const res = await this.api.put('/api/map/pin/'+ markerId, {
             area: {
                 type: 'Polygon',
                 coordinates: coordinates,
@@ -76,8 +76,8 @@ class MapServiceApi {
     }
 
     async updateMarkerPosition({ latitude, longitude, id }: UpdatePinProps) {
-        await api.getToken();
-        const res = await api.api.put('/api/map/pin/'+ id, {
+        await this.getToken();
+        const res = await this.api.put('/api/map/pin/'+ id, {
             latitude: latitude,
             longitude: longitude,
             area: null
@@ -91,8 +91,8 @@ class MapServiceApi {
     }
 
     async deleteMarker(markerId: number) {
-        await api.getToken();
-        const res = await api.api.delete('api/map/pin/'+ markerId);
+        await this.getToken();
+        const res = await this.api.delete('api/map/pin/'+ markerId);
 
         if (res.status !== 200) {
             throw new Error("Unexpected error creating map pin");
