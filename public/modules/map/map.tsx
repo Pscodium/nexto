@@ -6,8 +6,11 @@ import { BlockPicker } from 'react-color';
 import { useNavigate } from "react-router-dom";
 import { IoIosLogOut } from 'react-icons/io';
 import './css/map.css';
+import { ChildProps } from "../../middleware/authentication";
 
-export default function HomePage() {
+interface MapProps extends ChildProps {}
+
+export default function HomePage({ authUser }: MapProps) {
     const [pinColor, setPinColor] = useState('#00ff00');
     const [openPalette, setOpenPalette] = useState(false);
     const mapRef = useRef<Map>(null);

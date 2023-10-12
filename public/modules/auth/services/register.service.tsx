@@ -16,7 +16,9 @@ import { Toaster } from '../../../components/ui/toaster';
 import { BiArrowBack } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { authServiceApi } from './auth.service.api';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import '../css/loading.css';
+import { auth } from '../../../services/firebase.config';
 
 export interface RegisterComponentProps extends ComponentProps<'div'> { }
 
@@ -25,6 +27,7 @@ interface InputsProps {
     lastName: string | undefined;
     email: string | undefined;
     password: string | undefined;
+    nickname: string | undefined;
 }
 
 export default function RegisterComponent(props: RegisterComponentProps) {
@@ -37,13 +40,21 @@ export default function RegisterComponent(props: RegisterComponentProps) {
     const [completedPassword, setCompletedPassword] = useState(false);
     const [completedFirstName, setCompletedFirstName] = useState(false);
     const [completedLastName, setCompletedLastName] = useState(false);
+    const [completedNickname, setCompletedNickname] = useState(false);
     const [cantCompletedRegistration, setCantCompletedRegistration] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loader, setLoader] = useState(false);
+    const [
+        createUserWithEmailAndPassword,
+        user,
+        loading,
+        error,
+    ] = useCreateUserWithEmailAndPassword(auth);
 
     const [emailValid, setEmailValid] = useState(true);
     const [passwordValid, setPasswordValid] = useState(true);
 
     const [inputs, setInputs] = useState<InputsProps>({
+        nickname: undefined,
         firstName: undefined,
         lastName: undefined,
         email: undefined,
@@ -61,6 +72,10 @@ export default function RegisterComponent(props: RegisterComponentProps) {
             setCantPassStep(false);
         }
 
+        if (inputs.nickname) {
+            setCompletedNickname(true);
+        }
+
         if (inputs.firstName) {
             setCompletedFirstName(true);
         }
@@ -69,16 +84,31 @@ export default function RegisterComponent(props: RegisterComponentProps) {
             setCompletedLastName(true);
         }
 
-        if (inputs.firstName && inputs.lastName) {
+        if (inputs.firstName && inputs.lastName && inputs.nickname) {
             setCantCompletedRegistration(false);
         }
     }, [inputs]);
+
+    useEffect(() => {
+        if (loading) {
+            setLoader(true);
+        }
+        if (user) {
+            navigate('/login');
+            setLoader(false);
+        }
+        if (error) {
+            // TODO: create a message error for the user
+            console.error(error);
+        }
+    }, [error, loading, user]);
 
     useEffect(() => {
         setCompletedPassword(true);
         setCompletedEmail(true);
         setCompletedFirstName(true);
         setCompletedLastName(true);
+        setCompletedNickname(true);
     }, []);
 
 
@@ -118,34 +148,41 @@ export default function RegisterComponent(props: RegisterComponentProps) {
     }
 
     async function onCompleteRegistration() {
-        if (!inputs.firstName && inputs.lastName) {
+        if (!inputs.firstName && inputs.lastName && inputs.nickname) {
             setCompletedFirstName(false);
             return;
         }
-        if (!inputs.lastName && inputs.firstName) {
+        if (!inputs.lastName && inputs.firstName && inputs.nickname) {
             setCompletedLastName(false);
             return;
         }
-        if (!inputs.firstName && !inputs.lastName) {
+        if (!inputs.nickname && inputs.firstName && inputs.lastName) {
+            setCompletedNickname(false);
+            return;
+        }
+        if (!inputs.firstName || !inputs.lastName || !inputs.nickname) {
             setCantCompletedRegistration(true);
             return;
         }
         setCantCompletedRegistration(false);
-        setLoading(true);
+        setLoader(true);
         try {
             const response = await authServiceApi.register({
                 email: inputs.email,
                 password: inputs.password,
                 firstName: inputs.firstName,
-                lastName: inputs.lastName
+                lastName: inputs.lastName,
+                nickname: inputs.nickname
             });
+            if (!inputs.email || !inputs.password) {
+                return;
+            }
             if (response) {
-                navigate('/login');
-                setLoading(false);
+                createUserWithEmailAndPassword(inputs.email, inputs.password);
             }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
-            setLoading(false);
+            setLoader(false);
             if (err.response.status === 409) {
                 setCompletedEmail(false);
                 setFirstStep(true);
@@ -288,7 +325,7 @@ export default function RegisterComponent(props: RegisterComponentProps) {
                     </>
                     :
                     <>
-                        {loading ?
+                        {loader ?
                             <div className='bg-slate-200/50 h-[100%] w-[100%] absolute top-0 right-0 items-center justify-center flex'>
                                 <svg className='loading' viewBox="25 25 50 50">
                                     <circle className='circle' cx="50" cy="50" r="20"></circle>
@@ -310,6 +347,18 @@ export default function RegisterComponent(props: RegisterComponentProps) {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="grid gap-4">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="email">Nickname</Label>
+                                    <Input
+                                        id="email"
+                                        className={!completedNickname || cantCompletedRegistration ? 'border-red-500' : ''}
+                                        type="text"
+                                        placeholder="Your nickname"
+                                        value={inputs.nickname}
+                                        onKeyDown={handleKeyPress}
+                                        onChange={(e) => setInputs({ ...inputs, nickname: e.target.value })}
+                                    />
+                                </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="email">First Name</Label>
                                     <Input

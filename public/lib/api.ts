@@ -10,13 +10,35 @@ class ExtendableError extends Error {
 
 class InvalidBearerToken extends ExtendableError {}
 
+class UnexpectedError extends ExtendableError {}
+
+enum UserRole {
+    ADMIN = "admin",
+    DEVELOPER = "developer",
+    OWNER = "owner",
+    CUSTOMER = "customer",
+    DEFAULT = "default"
+}
+interface UserProps {
+    id: number;
+    nickname: string;
+    external_id: string | undefined;
+    role: UserRole;
+	firstName: string;
+	lastName: string;
+	email: string;
+	createdAt: string;
+	updatedAt: string;
+	token: string;
+}
+
 class Api {
     public api: AxiosInstance;
     public token: string | undefined;
 
     constructor() {
         this.api = axios.create({
-            baseURL: "http://localhost:3000",
+            baseURL: process.env.BACKEND_ENDPOINT,
         });
     }
 
@@ -38,7 +60,7 @@ class Api {
         });
     }
 
-    public async getToken() {
+    public async getToken(): Promise<string | null> {
         const token = localStorage.getItem('BEARER_TOKEN');
 
         this.api.interceptors.request.use(async config => {
@@ -69,7 +91,24 @@ class Api {
 
         return hasToken;
     }
+
+    public async getUserData(): Promise<UserProps> {
+        this.getToken();
+        try {
+            const res = await this.api.get('/data/user');
+
+            if (res.status != 200) {
+                throw new UnexpectedError('Unexpected status code: ' + res.status);
+            }
+
+            return res.data;
+        } catch (err) {
+            console.error(err);
+            throw new InvalidBearerToken('Authentication Failed');
+        }
+    }
 }
 
-export { InvalidBearerToken };
+export { InvalidBearerToken, Api };
+export type { UserProps, UserRole };
 export const api = new Api();

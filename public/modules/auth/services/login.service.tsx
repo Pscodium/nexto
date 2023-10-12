@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ComponentProps, useEffect, useState } from 'react';
 import { Icons } from "../../../components/icons";
@@ -16,6 +17,8 @@ import { useNavigate } from 'react-router-dom';
 import { authServiceApi } from './auth.service.api';
 import { Toaster } from '../../../components/ui/toaster';
 import { useToast } from '../../../components/ui/use-toast';
+import { useSignInWithGoogle, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { auth } from '../../../services/firebase.config';
 
 
 export interface LoginComponentProps extends ComponentProps<'div'> {}
@@ -28,10 +31,17 @@ interface InputProps {
 export default function LoginComponent(props: LoginComponentProps) {
     const navigate = useNavigate();
     const { toast } = useToast();
-    const [loading, setLoading] = useState(false);
+    const [loader, setLoader] = useState(false);
     const [cantCompleteLogin, setCantCompleteLogin] = useState(false);
     const [completedEmail, setCompletedEmail] = useState(true);
     const [completedPassword, setCompletedPassword] = useState(true);
+    const [signInWithGoogle] = useSignInWithGoogle(auth);
+    const [
+        signInWithEmailAndPassword,
+        user,
+        loading,
+        error,
+    ] = useSignInWithEmailAndPassword(auth);
     const [inputs, setInputs] = useState<InputProps>({
         email: undefined,
         password: undefined
@@ -65,16 +75,20 @@ export default function LoginComponent(props: LoginComponentProps) {
             return;
         }
         setCantCompleteLogin(false);
-        setLoading(true);
+        setLoader(true);
         try {
             const res = await authServiceApi.login(inputs.email, inputs.password);
+            if (!inputs.email || !inputs.password) {
+                return;
+            }
 
             if (res) {
+                signInWithEmailAndPassword(inputs.email, inputs.password);
                 navigate('/');
-                setLoading(false);
+                setLoader(false);
             }
         } catch (err: any) {
-            setLoading(false);
+            setLoader(false);
             setCantCompleteLogin(true);
             toast({
                 variant: "destructive",
@@ -101,6 +115,21 @@ export default function LoginComponent(props: LoginComponentProps) {
         }
     }, [inputs]);
 
+    useEffect(() => {
+        if (loading) {
+            setLoader(true);
+        }
+        if (user) {
+            console.log(user, " AQUI");
+            navigate('/');
+            setLoader(false);
+        }
+        if (error) {
+            // TODO: create a message error for the user
+            console.error(error);
+        }
+    }, [error, loading, user]);
+
     return (
         <div {...props}>
             <Card className='bg-slate-50 shadow-sm shadow-black/20'>
@@ -116,7 +145,7 @@ export default function LoginComponent(props: LoginComponentProps) {
                             <Icons.gitHub className="mr-2 h-4 w-4" />
                             Github
                         </Button>
-                        <Button variant="outline">
+                        <Button variant="outline" onClick={() => signInWithGoogle()}>
                             <Icons.google className="mr-2 h-4 w-4" />
                             Google
                         </Button>
@@ -167,7 +196,7 @@ export default function LoginComponent(props: LoginComponentProps) {
             <Button className="items-center justify-center flex h-[30px]" onClick={onClickRegister} >
                 <Label className="self-center cursor-pointer text-zinc-700 underline">if you don't have an account, create it now</Label>
             </Button>
-            {loading ?
+            {loader ?
                 <div className='bg-slate-200/50 h-[100%] w-[100%] absolute top-0 right-0 items-center justify-center flex'>
                     <svg className='loading' viewBox="25 25 50 50">
                         <circle className='circle' cx="50" cy="50" r="20"></circle>

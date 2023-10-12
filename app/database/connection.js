@@ -8,6 +8,7 @@ dotenv.config();
 
 const sequelize = new Sequelize(String(process.env.DB_NAME), String(process.env.DB_USER), String(process.env.DB_PASSWORD), {
     host: process.env.DB_HOST,
+    port: String(process.env.DB_PORT),
     dialect: 'mysql',
 });
 
