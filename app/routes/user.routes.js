@@ -1,4 +1,5 @@
 const users = require("../controllers/user.controller");
+const enums = require("../utils/enums");
 
 /**
  *
@@ -6,8 +7,15 @@ const users = require("../controllers/user.controller");
  * @param {import('../middleware/authentication')} auth
  */
 exports.init = function(app, auth) {
-    app.get('/login', users.login);
-    app.post('/session/login', users.session);
-    app.post('/register', users.register);
+    app.post('/register', auth.register);
+    app.get('/login', auth.login);
+    app.post('/session/login', auth.session);
+    app.post('/session/authenticate', auth.validateSession);
+    app.get('/session/logout', auth.sessionOrJwt, auth.sessionLogout);
     app.get('/data/user', auth.sessionOrJwt, users.getUserData);
+    app.get('/users', auth.sessionOrJwt, users.getUsers);
+    app.get('/user/:id', auth.sessionOrJwt, users.getUserById);
+    app.delete('/user/:id', auth.sessionOrJwt, users.deleteUser);
+    app.put('/user/update', auth.sessionOrJwt, users.userUpdateAccountInfo);
+    app.put('/user/update/:id', auth.sessionOrJwt, auth.hasPermissions([enums.Permissions.MANAGE_USERS, enums.Permissions.MANAGE_ROLES]), users.updateUserById);
 };

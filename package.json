@@ -12,7 +12,10 @@
     "build": "tsc && vite build ./public",
     "lint": "eslint ./public --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview ./public",
-    "load_database": "node ./app/utils/scripts/load_database.js"
+    "test_loader": "node ./test/scripts/load.tests.js",
+    "load_database": "node ./app/utils/scripts/load_database.js",
+    "tests": "mocha ./test/**.test.js --timeout 180000 --exit",
+    "test": "npm run test_loader && mocha ./test/before.test.js --timeout 180000 --exit"
   },
   "repository": {
     "type": "git",
@@ -41,6 +44,7 @@
     "@typescript-eslint/parser": "^6.2.0",
     "@vitejs/plugin-react": "^4.0.3",
     "autoprefixer": "^10.4.15",
+    "chai": "^4.3.10",
     "cors": "^2.8.5",
     "dotenv": "15.0.0",
     "dotenv-webpack": "^8.0.1",
@@ -51,6 +55,7 @@
     "nodemon": "^3.0.1",
     "postcss": "^8.4.27",
     "sass": "^1.65.1",
+    "supertest": "^6.3.3",
     "tailwindcss": "^3.3.3",
     "ts-node": "^10.9.1",
     "typescript": "5.1.6",
@@ -116,6 +121,7 @@
     "lowlight": "^2.9.0",
     "lucide-react": "^0.265.0",
     "match-sorter": "^6.3.1",
+    "mocha": "^10.2.0",
     "moment": "^2.29.4",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.5",

@@ -41,7 +41,7 @@ module.exports = function Map(sequelize) {
         tableName: 'map',
         timestamps: true,
         associate: function (models) {
-            Map.belongsTo(models.User);
+            Map.belongsTo(models.Users, { foreignKey: 'userId' });
         }
     });
     return Map;

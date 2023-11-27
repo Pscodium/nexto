@@ -6,6 +6,7 @@ const { DataTypes } = require("sequelize");
  * @property {number} sessionId
  * @property {string} jwt
  * @property {number} userId
+ * @property {number} expiration_date
  */
 
 /**
@@ -29,10 +30,13 @@ module.exports = function Session(sequelize) {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
+        expiration_date: {
+            type: DataTypes.DATE,
+            allowNull: false
+        }
     }, {
         associate: function(models) {
-            Session.belongsTo(models.User, {
-                foreignKey: 'userId',
+            Session.belongsTo(models.Users, {
                 onDelete: "cascade"
             });
         }

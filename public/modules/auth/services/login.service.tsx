@@ -120,7 +120,6 @@ export default function LoginComponent(props: LoginComponentProps) {
             setLoader(true);
         }
         if (user) {
-            console.log(user, " AQUI");
             navigate('/');
             setLoader(false);
         }
