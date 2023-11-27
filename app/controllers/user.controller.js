@@ -1,132 +1,21 @@
 const { db } = require('../database/connection');
-const jwt = require('jsonwebtoken');
-
-exports.register = async (req, res) => {
-    try {
-        const userExists = await db.User.findOne({ where: { email: req.body.email }});
-        if (userExists) {
-            return res.status(409).json({ message: "Email already exists."});
-        }
-
-        const user = db.User.build(req.body);
-        user.password = db.User.encryptPassword(req.body.password);
-        await user.save();
-
-        delete user.dataValues.password;
-
-        return res.json(user);
-    } catch (err) {
-        return res.status(404).json({ success: false, message: "Error creating user. Verify request body to validate this error."});
-    }
-};
-
-exports.login = async (req, res) => {
-    const { password, email } = req.body;
-
-    const user = await db.User.findOne({
-        where: { email }
-    });
-
-    if (!user) {
-        return res.sendStatus(404).json({ message: "Email does not exist."});
-    }
-
-    try {
-        const validatePassword = await user.authenticate(password, user.password);
-        if (!validatePassword) {
-            return res.status(401).json({ success: false });
-        }
-
-        const token = jwt.sign({ id: user.id }, String(process.env.JWT_SECRET_KEY), { expiresIn: '1d' });
-
-        const sessionExists = await db.Session.findOne({
-            where: {
-                userId: user.id,
-            }
-        });
-        if (!sessionExists) {
-            const newToken = await db.Session.create({
-                jwt: token
-            });
-            newToken.setUser(user);
-            await newToken.save();
-        } else {
-            await db.Session.update({
-                jwt: token
-            },{
-                where: {
-                    userId: user.id
-                }
-            });
-        }
-
-        user.dataValues.token = token;
-        delete user.dataValues.password;
-
-        return res.json(user);
-    } catch (err) {
-        return res.status(401).json({ success: false });
-    }
-};
-
-exports.session = async (req, res) => {
-    const { password, email } = req.body;
-
-    const user = await db.User.findOne({
-        where: { email }
-    });
-
-    if (!user) {
-        return res.sendStatus(404).json({ message: "Email does not exist."});
-    }
-
-    try {
-        const validatePassword = await user.authenticate(password, user.password);
-        if (!validatePassword) {
-            return res.status(401).json({ success: false });
-        }
-
-        const sessionExists = await db.Session.findOne({
-            where: {
-                userId: user.id
-            }
-        });
-
-        if (sessionExists) {
-            await db.Session.update({
-                jwt: null
-            }, {
-                where: {
-                    userId: user.id
-                }
-            });
-            user.dataValues.token = sessionExists.sessionId;
-            delete user.dataValues.password;
-
-            return res.json(user);
-        }
-
-        const newToken = await db.Session.create({
-            jwt: null
-        });
-        newToken.setUser(user);
-        await newToken.save();
-
-        user.dataValues.token = newToken.sessionId;
-        delete user.dataValues.password;
-
-        return res.json(user);
-    } catch (err) {
-        console.error(err);
-        return res.status(401).json({ success: false });
-    }
-};
+const { uReqCleaner, uAdminReqCleaner } = require('../services/request.service');
+require('dotenv').config();
 
 exports.getUserData = async (req, res) => {
     try {
-        const user = await db.User.findOne({
+        const user = await db.Users.findOne({
             where: {
                 id: req.userId
+            },
+            attributes: {
+                exclude: ['password', 'permissionId']
+            },
+            include:{
+                model: db.Permissions,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'id', 'userId']
+                }
             }
         });
 
@@ -150,11 +39,114 @@ exports.getUserData = async (req, res) => {
             user.dataValues.token = session.jwt;
         }
 
-        delete user.dataValues.password;
-
         return res.json(user);
     } catch (err) {
         console.error(err);
         return res.status(401).json({ success: false });
+    }
+};
+
+exports.getUsers = async (req, res) => {
+    try {
+        const users = await db.Users.findAll({
+            attributes: {
+                exclude: ['password', 'permissionId']
+            }
+        });
+
+        return res.status(200).json(users);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false });
+    }
+};
+
+exports.getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await db.Users.findOne({
+            where: {
+                id: id
+            },
+            attributes: {
+                exclude: ['password', 'permissionId']
+            }
+        });
+        if (!user) {
+            return res.status(404).json({ success: false });
+        }
+        return res.status(200).json(user);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false });
+    }
+};
+
+exports.userUpdateAccountInfo = async (req, res) => {
+    try {
+        const user = await db.Users.findOne({
+            where: { id: req.userId }
+        });
+        if (!user) {
+            return res.status(404).json({ success: false });
+        }
+        await uReqCleaner(req);
+        await db.Users.update(req.body, {
+            where: {
+                id: req.userId
+            }
+        });
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false });
+    }
+};
+
+exports.updateUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await db.Users.findOne({
+            where: { id }
+        });
+        if (!user) {
+            return res.status(404).json({ success: false });
+        }
+        await uAdminReqCleaner(req);
+        await db.Users.update(req.body, {
+            where: {
+                id: id
+            }
+        });
+
+        res.sendStatus(200);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false });
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await db.Users.findOne({
+            where: { id }
+        });
+        if (!user) {
+            return res.status(404).json({ success: false });
+        }
+        await db.Permissions.destroy({
+            where: { id: user.permissionId }
+        });
+        await db.Users.destroy({
+            where: { id }
+        });
+        return res.status(200).json({ success: true });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false });
     }
 };

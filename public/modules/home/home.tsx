@@ -14,7 +14,7 @@ import { addDoc, collection, limit, orderBy, query, serverTimestamp } from "fire
 import ChatMessage, { MessageProps } from './components/chatMessage';
 import { ChildProps } from "../../middleware/authentication";
 
-interface ChatProps extends ChildProps {}
+interface ChatProps extends ChildProps { }
 
 export default function Home({ authUser }: ChatProps) {
     const navigate = useNavigate();
@@ -49,18 +49,20 @@ export default function Home({ authUser }: ChatProps) {
     }
 
     const sendMessage = async () => {
-
         if (!auth.currentUser) {
             return;
         }
         const { photoURL, uid } = auth.currentUser;
-
+        let consecutive = isLastSender(uid);
+        if (!consecutive) {
+            consecutive = false;
+        }
         await addDoc(messageRef, {
             text: text,
             uid: uid,
             photoURL,
             name: authUser?.nickname,
-            consecutive: isLastSender(uid),
+            consecutive: consecutive,
             createdAt: serverTimestamp()
         });
         setText('');
@@ -96,7 +98,9 @@ export default function Home({ authUser }: ChatProps) {
                             </div>
                             <div className="flex w-full absolute bottom-0 py-2 items-center justify-evenly bg-slate-700">
                                 <Input onKeyDown={handleKeyPress} value={text} onChange={(e) => setText(e.target.value)} className="w-[64vw] h-[50px] rounded-full text-slate-100" type="text" placeholder="Digite sua mensagem..." />
-                                <Button onClick={() => { text != "" ? sendMessage() : null; }} className="bg-slate-500 hover:bg-slate-400 rounded-full w-[50px] h-[50px]" type="submit">
+                                <Button onClick={() => {
+                                    text != "" ? sendMessage() : null;
+                                }} className="bg-slate-500 hover:bg-slate-400 rounded-full w-[50px] h-[50px]" type="submit">
                                     <IoMdSend className="h-[20px] w-[20px] fill-[#2c2a2a]" />
                                 </Button>
                             </div>

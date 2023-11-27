@@ -31,5 +31,6 @@
     "plugins": [
         "react",
         "@typescript-eslint"
-    ]
+    ],
+    "ignorePatterns": ["app", "test"]
 }

@@ -36,12 +36,12 @@
     "./public/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/utils/enums/index.js"  ],
+  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "app"
   ],
   "paths": {
     "@/*": ["./public/src/*"]
-  },
-  "references": [{ "path": "./tsconfig.node.json" }]
+  }
 }

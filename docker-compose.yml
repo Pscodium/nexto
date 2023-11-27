@@ -19,23 +19,6 @@ services:
     networks:
       - backend
 
-  app:
-    container_name: 'nexto-api'
-    env_file:
-      - .env
-    environment:
-      - DB_HOST=db
-    build: .
-    depends_on:
-      - db
-    command: npm start
-    ports:
-      - "3000:3000"
-    volumes:
-      - .:/usr/app
-    networks:
-      - backend
-
 volumes:
   dbnexto:
 

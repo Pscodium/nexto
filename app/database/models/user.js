@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const bcrypt = require("bcryptjs");
-const ENUMS = require("../../utils/enums/index")
+const ENUMS = require("../../utils/enums/index");
 
 /**
  * @typedef User
@@ -20,10 +20,10 @@ const ENUMS = require("../../utils/enums/index")
 /**
  *
  * @param {import('sequelize').Sequelize} sequelize
- * @returns
+ * @returns {ModelCtor<Model<any, any>>}
  */
-module.exports = function User(sequelize) {
-    const User = sequelize.define("user", {
+module.exports = function Users(sequelize) {
+    const Users = sequelize.define("users", {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -58,17 +58,21 @@ module.exports = function User(sequelize) {
             type: DataTypes.STRING,
             allowNull: false
         }
+    }, {
+        associate: function (models) {
+            Users.belongsTo(models.Permissions);
+        }
     });
 
-    User.encryptPassword = function (password) {
+    Users.encryptPassword = function (password) {
         // eslint-disable-next-line no-sync
         this.password = bcrypt.hashSync(password, 8);
         return this.password;
     };
 
-    User.prototype.authenticate = async function (requestPassword, currentPassword) {
+    Users.prototype.authenticate = async function (requestPassword, currentPassword) {
         return await bcrypt.compare(requestPassword, currentPassword);
     };
 
-    return User;
+    return Users;
 };

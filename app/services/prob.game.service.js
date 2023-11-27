@@ -1,7 +1,7 @@
 
 
 exports.impossibleProb = async () => {
-    const probabilities = [0.008, 0.02, 0.05, 0.1, 0,222, 0.60];
+    const probabilities = [0.008, 0.02, 0.05, 0.1, 0, 222, 0.60];
 
     const randomInt = randomWithProbabilities(probabilities);
 
@@ -9,32 +9,27 @@ exports.impossibleProb = async () => {
     let randomFloat;
 
     if (randomInt === 0) {
-        multi = Math.floor(Math.random() * ( 1000 - 41.92 + 1)) + 41.92;
+        multi = Math.floor(Math.random() * (1000 - 41.92 + 1)) + 41.92;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 1) {
-        multi = Math.floor(Math.random() * ( 41.91 - 8.67 + 1)) + 8.67;
+    } else if (randomInt === 1) {
+        multi = Math.floor(Math.random() * (41.91 - 8.67 + 1)) + 8.67;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 2) {
-        multi = Math.floor(Math.random() * ( 8.66 - 1.95 + 1)) + 1.95;
+    } else if (randomInt === 2) {
+        multi = Math.floor(Math.random() * (8.66 - 1.95 + 1)) + 1.95;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 3) {
-        multi = Math.floor(Math.random() * ( 1.94 - 1.40 + 1)) + 1.40;
+    } else if (randomInt === 3) {
+        multi = Math.floor(Math.random() * (1.94 - 1.40 + 1)) + 1.40;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 4) {
-        multi = Math.floor(Math.random() * ( 1.39 - 1.24 + 1)) + 1.24;
+    } else if (randomInt === 4) {
+        multi = Math.floor(Math.random() * (1.39 - 1.24 + 1)) + 1.24;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 5) {
-        multi = Math.floor(Math.random() * ( 1.24 - 1 + 1)) + 1;
+    } else if (randomInt === 5) {
+        multi = Math.floor(Math.random() * (1.24 - 1 + 1)) + 1;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
     }
@@ -54,21 +49,18 @@ exports.lowProb = async () => {
     let randomFloat;
 
     if (randomInt === 0) {
-        multi = Math.floor(Math.random() * ( 100 - 5 + 1)) + 5;
+        multi = Math.floor(Math.random() * (100 - 5 + 1)) + 5;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 1) {
-        multi = Math.floor(Math.random() * ( 6 - 1.54 + 1)) + 1.54;
+    } else if (randomInt === 1) {
+        multi = Math.floor(Math.random() * (6 - 1.54 + 1)) + 1.54;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 2) {
-        multi = Math.floor(Math.random() * ( 1.54 - 1.20 + 1)) + 1.20;
+    } else if (randomInt === 2) {
+        multi = Math.floor(Math.random() * (1.54 - 1.20 + 1)) + 1.20;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 3) {
+    } else if (randomInt === 3) {
         multi = Math.floor(Math.random() * (1.20 - 1 + 1)) + 1;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
@@ -88,17 +80,15 @@ exports.highProb = async () => {
     let randomFloat;
 
     if (randomInt === 0) {
-        multi = Math.floor(Math.random() * ( 100 - 8 + 1)) + 5;
+        multi = Math.floor(Math.random() * (100 - 8 + 1)) + 5;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 1) {
-        multi = Math.floor(Math.random() * ( 6 - 1.54 + 1)) + 1.54;
+    } else if (randomInt === 1) {
+        multi = Math.floor(Math.random() * (6 - 1.54 + 1)) + 1.54;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
-    }
-    else if (randomInt === 2) {
-        multi = Math.floor(Math.random() * ( 1.54 - 1 + 1)) + 1;
+    } else if (randomInt === 2) {
+        multi = Math.floor(Math.random() * (1.54 - 1 + 1)) + 1;
         randomFloat = Number((Math.random() * (1 - 0) + 0).toFixed(2));
         multi = parseFloat((multi + randomFloat).toFixed(2));
     }
@@ -107,7 +97,7 @@ exports.highProb = async () => {
 };
 
 exports.shuffleArray = async (array) => {
-    var shuffledList = [];
+    const shuffledList = [];
 
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
