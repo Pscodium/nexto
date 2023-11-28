@@ -170,6 +170,10 @@ class AuthService {
             if (userExists) {
                 return res.status(409).json({ message: "Email already exists."});
             }
+            const passwordValidate = await db.Users.passwordValidate(req.body.password);
+            if (!passwordValidate) {
+                return res.status(400).json({ message: "Missing password requirements"});
+            }
             const passwordHashed = db.Users.encryptPassword(body.password);
 
             const permissions = await db.Permissions.create();

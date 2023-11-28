@@ -70,6 +70,11 @@ module.exports = function Users(sequelize) {
         return this.password;
     };
 
+    Users.passwordValidate = async function (password) {
+        const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g;
+        return regex.test(password);
+    };
+
     Users.prototype.authenticate = async function (requestPassword, currentPassword) {
         return await bcrypt.compare(requestPassword, currentPassword);
     };
