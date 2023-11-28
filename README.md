@@ -1,1 +1,1 @@
-# nexto-bet-game
+# nexto
