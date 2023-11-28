@@ -159,7 +159,7 @@ class AuthService {
 
             return res.json(user);
         } catch (err) {
-            return res.status(401).json({ success: false });
+            return res.status(500).json({ success: false });
         }
     }
 
@@ -217,7 +217,7 @@ class AuthService {
 
             const validatePassword = await user.authenticate(password, user.password);
             if (!validatePassword) {
-                return res.status(401).json({ success: false });
+                return res.status(404).json({ success: false });
             }
             await lResCleaner(user.dataValues);
 

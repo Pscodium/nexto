@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
 // AuthMiddleware.tsx
@@ -37,8 +38,8 @@ export default function Authenticate({ children }: AuthMiddlewareProps) {
 
     return (
         <>
-            {isAuth?
-                React.cloneElement(children, { authUser })
+            {isAuth ?
+                React.cloneElement(children as React.DetailedReactHTMLElement<any, HTMLElement>, { authUser })
                 :
                 <Navigate to={'/login'} />
             }

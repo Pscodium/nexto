@@ -51,6 +51,11 @@ describe('Users Tests', () => {
         expect(res.body.id).equals(testUserId);
     });
 
+    it('Trying to get non-existent user by ID', async () => {
+        res = await agent.get('/user/-1');
+        expect(res.statusCode).equals(404);
+    });
+
     it('Register and delete Test', async () => {
         res = await this.another_agent.post('/register').send({
             "email": "user_to_delete@gmail.com",
@@ -79,6 +84,30 @@ describe('Users Tests', () => {
 
         res = await this.another_agent.get('/data/user');
         expect(res.statusCode).equals(401);
+    });
+
+    it('Trying to login with wrong password', async () => {
+        res = await this.another_agent.post('/session/login').send({
+            "email": "test@email.com",
+            "password": "wrongpassword"
+        });
+        expect(res.statusCode).equals(404);
+    });
+
+    it("Trying to login with wrong email", async () => {
+        res = await this.another_agent.post('/session/login').send({
+            "email": "wrong_email@email.com",
+            "password": "123"
+        });
+        expect(res.statusCode).equals(404);
+    });
+
+    it("Tring to register an existing user", async () => {
+        res = await this.another_agent.post('/register').send({
+            "email": "test@email.com",
+            "password": '12312412341'
+        });
+        expect(res.statusCode).equals(409);
     });
 
     after(async () => {

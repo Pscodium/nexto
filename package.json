@@ -14,8 +14,8 @@
     "preview": "vite preview ./public",
     "test_loader": "node ./test/scripts/load.tests.js",
     "load_database": "node ./app/utils/scripts/load_database.js",
-    "tests": "mocha ./test/**.test.js --timeout 180000 --exit",
-    "test": "npm run test_loader && mocha ./test/before.test.js --timeout 180000 --exit"
+    "tests": "npm run load_database && mocha ./test/**.test.js --timeout 180000 --exit",
+    "test": "npm run load_database && mocha ./test/before.test.js --timeout 180000 --exit"
   },
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/leaflet": "^1.9.3",
     "@types/leaflet-draw": "^1.0.7",
-    "@types/node": "^20.8.0",
+    "@types/node": "^20.10.0",
     "@types/react-color": "^3.0.6",
     "@types/react-table": "^7.7.16",
     "@typescript-eslint/eslint-plugin": "^6.2.0",

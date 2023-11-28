@@ -8,34 +8,42 @@ const bodyParser = require('body-parser');
 const routeInitialization = require('./routes/config');
 const { logs } = require('./middleware/logs');
 const authentication = require('./middleware/authentication');
-let app = express();
+const app = express();
 
-if (db.sequelize) {
-    db.sequelize.authenticate()
-    .then(() => {
-        const allowedOrigins = [process.env.FRONTEND_ORIGIN];
+function start() {
+    try {
+        if (db.sequelize) {
+            db.sequelize.authenticate()
+                .then(() => {
+                    const allowedOrigins = [process.env.FRONTEND_ORIGIN];
 
-        const options = {
-            origin: String(allowedOrigins)
-        };
+                    const options = {
+                        origin: String(allowedOrigins)
+                    };
 
-        const router = Router();
-        const routes = routeInitialization(router, authentication);
+                    const router = Router();
+                    const routes = routeInitialization(router, authentication);
 
-        app.use(bodyParser.json());
-        app.use(cors(options));
-        app.use(logs);
-        app.use(routes);
+                    app.use(bodyParser.json());
+                    app.use(cors(options));
+                    app.use(logs);
+                    app.use(routes);
 
-        app.listen(3000);
+                    app.listen(3000);
 
 
-        console.log("Connection established!");
-    })
-    .catch((err) => {
-        console.error("Error authenticating database: ", err);
-    });
+                    console.log("Connection established!");
+                })
+                .catch((err) => {
+                    console.error("Error authenticating database: ", err);
+                });
 
+        }
+    } catch (err) {
+        console.error(`[Server Error] - ${err.message}`);
+    }
 }
 
+start();
+exports.start = start;
 module.exports = app;

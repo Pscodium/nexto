@@ -21,9 +21,9 @@ export default function Sidebar({ width }: SidebarProps) {
     }, [location]);
 
     return (
-        <div className={`w-[${width}px] min-h-screen`}>
-            {width?
-                <div className={`w-[${width}px] bg-slate-700 h-full`}>
+        <div className={`w-[250px] min-h-screen`}>
+            {width ?
+                <div className={`w-[250px] bg-slate-700 h-full`}>
                     <div className="flex flex-row h-[60px] border-b border-b-slate-500 items-center justify-center gap-3">
                         <MdSpaceDashboard className="fill-slate-100 w-6 h-6" />
                         <h1 className="text-xl font-bold text-slate-100">Dashboard</h1>
@@ -32,7 +32,7 @@ export default function Sidebar({ width }: SidebarProps) {
                         <div className="flex flex-col gap-3 items-center py-4">
                             <NavLink
                                 to=''
-                                className={ isHome? 'bg-slate-600 p-3 w-[calc(100%-25px)] rounded-lg' : 'p-3 w-[calc(100%-25px)]'}
+                                className={ isHome ? 'bg-slate-600 p-3 w-[calc(100%-25px)] rounded-lg' : 'p-3 w-[calc(100%-25px)]'}
                             >
                                 <div className="flex flex-row items-center gap-2">
                                     <HiHome className="fill-slate-100" />
@@ -44,7 +44,7 @@ export default function Sidebar({ width }: SidebarProps) {
                             <NavLink
                                 to='users'
                                 className={({ isActive }) =>
-                                    isActive? 'bg-slate-600 p-3 w-[calc(100%-25px)] rounded-lg' : 'p-3 w-[calc(100%-25px)]'
+                                    isActive ? 'bg-slate-600 p-3 w-[calc(100%-25px)] rounded-lg' : 'p-3 w-[calc(100%-25px)]'
                                 }
                             >
                                 <div className="flex flex-row items-center gap-2">
