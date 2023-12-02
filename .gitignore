@@ -157,3 +157,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# firebase credentials
+app/utils/scripts/credentials.json

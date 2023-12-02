@@ -12,7 +12,7 @@ describe('Users Tests', () => {
 
         res = await agent.post('/session/login').send({
             "email": "nexto@email.com",
-            "password": "123"
+            "password": "123456"
         });
         expect(res.statusCode).equals(200);
         this.user = res.body;
@@ -21,7 +21,7 @@ describe('Users Tests', () => {
     it('Login test', async () => {
         res = await this.another_agent.post('/session/login').send({
             "email": "test@email.com",
-            "password": "123"
+            "password": "123456"
         });
         expect(res.statusCode).equals(200);
         expect(res.body.email).equals("test@email.com");
@@ -62,7 +62,7 @@ describe('Users Tests', () => {
             "firstName": "Delete",
             "lastName": "This User",
             "nickname": "Deleted",
-            "password": "123"
+            "password": "Abc1234$"
         });
         expect(res.statusCode).equals(200);
         const user_to_delete = res.body;
@@ -75,7 +75,7 @@ describe('Users Tests', () => {
     it('Logout and try to use authenticated routes', async () => {
         res = await this.another_agent.post('/session/login').send({
             "email": "test@email.com",
-            "password": "123"
+            "password": "123456"
         });
         expect(res.statusCode).equals(200);
 
@@ -97,7 +97,7 @@ describe('Users Tests', () => {
     it("Trying to login with wrong email", async () => {
         res = await this.another_agent.post('/session/login').send({
             "email": "wrong_email@email.com",
-            "password": "123"
+            "password": "123456"
         });
         expect(res.statusCode).equals(404);
     });

@@ -1,27 +1,11 @@
 import React from "react";
 import Table, { SelectColumnFilter, StatusPill } from "../components/table.jsx";
-import { DashboardOutletContextProps } from "../dashboard.js";
-import { useOutletContext } from "react-router-dom";
 
 
 
 export default function Users() {
-    const context = useOutletContext<DashboardOutletContextProps>();
-    const user = context.authUser;
 
     const getData = () => [
-        {
-            name: `${user?.firstName} ${user?.lastName}`,
-            email: user?.email,
-            title: "Regional Paradigm Technician",
-            department: "Optimization",
-            status: "Active",
-            role: user?.role,
-            locate: "Locate1",
-            posCoords: [260, 900],
-            imgUrl:
-                "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60"
-        },
         {
             name: "Cody Fisher",
             email: "cody.fisher@example.com",

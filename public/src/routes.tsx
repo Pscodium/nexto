@@ -29,16 +29,16 @@ export default function Router() {
 
             <Routes>
                 <Route path="/">
-                    <Route path="/map" element={<Authenticate children={<Map />} />} />
-                    <Route path="/" element={<Authenticate children={<Home />} />} />
-                    <Route path='/admin' element={<Authenticate children={<Dashboard />} />}>
+                    <Route path="/map" element={<Map />} />
+                    <Route path="/" element={<Home />} />
+                    <Route path='/admin' element={<Dashboard />}>
                         <Route index element={<DashboardHome />} />
                         {routes.map(({ path, component: Component }) => (
                             <Route
                                 path={path}
                                 element={
                                     <Suspense fallback={<Loader />}>
-                                        <Authenticate children={<Component />} />
+                                        <Component />
                                     </Suspense>
                                 }
                             />

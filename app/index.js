@@ -1,11 +1,14 @@
 require('dotenv').config();
 process.env.PRE_SYNC_DATABASE = true;
+const disabled_logs = process.env.DISABLED_LOGS;
 const { db } = require('./database/connection');
 const express = require('express');
 const { Router } = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+
 const routeInitialization = require('./routes/config');
+const logger = require('./services/logs.service');
 const { logs } = require('./middleware/logs');
 const authentication = require('./middleware/authentication');
 const app = express();
@@ -31,11 +34,12 @@ function start() {
 
                     app.listen(3000);
 
-
-                    console.log("Connection established!");
+                    if (!disabled_logs) {
+                        console.log(logger.success("Connection established!"));
+                    }
                 })
                 .catch((err) => {
-                    console.error("Error authenticating database: ", err);
+                    console.error(logger.alert("Error authenticating database: ", err));
                 });
 
         }

@@ -1,5 +1,6 @@
 /* eslint-disable dot-notation */
 require('dotenv').config();
+process.env.DISABLED_LOGS = true;
 const chai = require('chai');
 const supertest = require('supertest');
 const expect = chai.expect;

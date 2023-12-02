@@ -4,6 +4,7 @@ const { db } = require('../database/connection');
 const moment = require('moment');
 const permissionsService = require('../services/permissions.service');
 const { lResCleaner } = require('../services/request.service');
+const { FirebaseService } = require('../services/firebase.service');
 require('dotenv').config();
 
 class AuthService {
@@ -170,7 +171,7 @@ class AuthService {
             if (userExists) {
                 return res.status(409).json({ message: "Email already exists."});
             }
-            const passwordValidate = await db.Users.passwordValidate(req.body.password);
+            const passwordValidate = await db.Users.passwordValidate(body.password);
             if (!passwordValidate) {
                 return res.status(400).json({ message: "Missing password requirements"});
             }
@@ -187,6 +188,21 @@ class AuthService {
             await user.setPermission(permissions);
             await permissions.save();
             await permissions.setUser(user);
+
+            const firebaseService = new FirebaseService();
+
+            const uid = await firebaseService.createFirebaseUser({
+                email: body.email,
+                password: body.password,
+                firstName: body.firstName,
+                lastName: body.lastName,
+                nickname: body.nickname,
+                id: user.id,
+                permissionId: permissions.id,
+                role: user.role
+            });
+
+            user.external_id = uid;
             await user.save();
 
             delete user.dataValues.password;

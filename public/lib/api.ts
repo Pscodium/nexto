@@ -68,7 +68,7 @@ class Api {
             config.headers["Content-Type"] = "application/json";
 
             if (token) {
-                config.headers.Authorization =  `Bearer ${token}`;
+                config.headers.Authorization = `Bearer ${token}`;
             } else {
                 throw new InvalidBearerToken('Invalid Bearer token');
             }
@@ -93,7 +93,7 @@ class Api {
     }
 
     public async getUserData(): Promise<UserProps> {
-        this.getToken();
+        await this.getToken();
         try {
             const res = await this.api.get('/data/user');
 
@@ -102,6 +102,23 @@ class Api {
             }
 
             return res.data;
+        } catch (err) {
+            console.error(err);
+            throw new InvalidBearerToken('Authentication Failed');
+        }
+    }
+
+    public async logout(): Promise<boolean> {
+        await this.getToken();
+        try {
+            const res = await this.api.get('/session/logout');
+
+            localStorage.removeItem('BEARER_TOKEN');
+            if (res.status != 200) {
+                throw new UnexpectedError('Unexpected status code: ' + res.status);
+            }
+
+            return res.data.success;
         } catch (err) {
             console.error(err);
             throw new InvalidBearerToken('Authentication Failed');

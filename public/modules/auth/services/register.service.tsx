@@ -1,5 +1,4 @@
 import React, { ComponentProps, useEffect, useState } from 'react';
-import { Icons } from "../../../components/icons";
 import { Button } from "../../../components/ui/button";
 import {
     Card,
@@ -16,9 +15,7 @@ import { Toaster } from '../../../components/ui/toaster';
 import { BiArrowBack } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { authServiceApi } from './auth.service.api';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import '../css/loading.css';
-import { auth } from '../../../services/firebase.config';
 
 export interface RegisterComponentProps extends ComponentProps<'div'> { }
 
@@ -43,12 +40,6 @@ export default function RegisterComponent(props: RegisterComponentProps) {
     const [completedNickname, setCompletedNickname] = useState(false);
     const [cantCompletedRegistration, setCantCompletedRegistration] = useState(false);
     const [loader, setLoader] = useState(false);
-    const [
-        createUserWithEmailAndPassword,
-        user,
-        loading,
-        error,
-    ] = useCreateUserWithEmailAndPassword(auth);
 
     const [emailValid, setEmailValid] = useState(true);
     const [passwordValid, setPasswordValid] = useState(true);
@@ -88,20 +79,6 @@ export default function RegisterComponent(props: RegisterComponentProps) {
             setCantCompletedRegistration(false);
         }
     }, [inputs]);
-
-    useEffect(() => {
-        if (loading) {
-            setLoader(true);
-        }
-        if (user) {
-            navigate('/login');
-            setLoader(false);
-        }
-        if (error) {
-            // TODO: create a message error for the user
-            console.error(error);
-        }
-    }, [error, loading, user]);
 
     useEffect(() => {
         setCompletedPassword(true);
@@ -174,11 +151,9 @@ export default function RegisterComponent(props: RegisterComponentProps) {
                 lastName: inputs.lastName,
                 nickname: inputs.nickname
             });
-            if (!inputs.email || !inputs.password) {
-                return;
-            }
             if (response) {
-                createUserWithEmailAndPassword(inputs.email, inputs.password);
+                navigate('/login');
+                setLoader(false);
             }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
