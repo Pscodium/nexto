@@ -5,20 +5,21 @@ import { Card } from '../../components/ui/card';
 import { useNavigate } from "react-router-dom";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import { IoMdSend } from 'react-icons/io';
-import { useAuthState } from "react-firebase-hooks/auth";
+import { IoIosLogOut, IoMdSend } from 'react-icons/io';
+import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { auth, databaseApp } from "../../services/firebase.config";
 import { TailSpin } from 'react-loader-spinner';
-import { addDoc, collection, limit, orderBy, query, serverTimestamp } from "firebase/firestore";
+import { collection, limit, orderBy, query } from "firebase/firestore";
 import ChatMessage, { MessageProps } from './components/chatMessage';
-import { ChildProps } from "../../middleware/authentication";
+import { InvalidBearerToken, UserProps, api } from "../../lib/api";
+import { chatService } from './services/chat.service.api';
 
-interface ChatProps extends ChildProps { }
-
-export default function Home({ authUser }: ChatProps) {
+export default function Home() {
     const navigate = useNavigate();
     const [user] = useAuthState(auth);
+    const [signOut, loading] = useSignOut(auth);
+    const [reqUser, setReqUser] = useState<UserProps>();
     const [text, setText] = useState('');
     const dummy = useRef<HTMLDivElement>(null);
     const messageRef = collection(databaseApp, "messages");
@@ -26,15 +27,39 @@ export default function Home({ authUser }: ChatProps) {
     const [messages] = useCollectionData<MessageProps>(queryMessages);
 
     useEffect(() => {
-        if (!user) {
-            navigate('/login');
-        }
-    }, [user]);
-
+        getUser();
+    }, []);
 
     useEffect(() => {
         dummy.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
+
+    async function getUser() {
+        try {
+            const res = await api.getUserData();
+            if (res) {
+                setReqUser(res);
+            }
+        } catch (err) {
+            if (err instanceof InvalidBearerToken) {
+                navigate('/login');
+            }
+            console.error(err);
+        }
+    }
+
+    async function logout() {
+        try {
+            const success = await signOut();
+            if (success) {
+                navigate('/login');
+                await api.logout();
+            }
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
 
     function isLastSender(uid: string) {
         if (!uid || !messages) {
@@ -49,7 +74,7 @@ export default function Home({ authUser }: ChatProps) {
     }
 
     const sendMessage = async () => {
-        if (!auth.currentUser) {
+        if (!auth.currentUser || !reqUser) {
             return;
         }
         const { photoURL, uid } = auth.currentUser;
@@ -57,13 +82,10 @@ export default function Home({ authUser }: ChatProps) {
         if (!consecutive) {
             consecutive = false;
         }
-        await addDoc(messageRef, {
-            text: text,
-            uid: uid,
-            photoURL,
-            name: authUser?.nickname,
+        await chatService.sendMessage({
             consecutive: consecutive,
-            createdAt: serverTimestamp()
+            text: text,
+            uid: uid
         });
         setText('');
         dummy.current?.scrollIntoView({ behavior: "smooth" });
@@ -77,7 +99,7 @@ export default function Home({ authUser }: ChatProps) {
 
     return (
         <div>
-            {user ?
+            {user || loading ?
                 <div className="flex flex-col justify-center align-middle items-center bg-gradient-to-r from-gray-700 via-gray-900 to-black min-h-screen">
                     <Card className='w-[70vw] h-[70vh] rounded-xl overflow-hidden bg-slate-700 border-slate-700 relative'>
                         <div className="flex flex-col justify-between h-full w-full">
@@ -106,6 +128,9 @@ export default function Home({ authUser }: ChatProps) {
                             </div>
                         </div>
                     </Card >
+                    <button onClick={logout} className="h-[50px] w-[50px] flex items-center justify-center absolute bottom-1 hover:bg-zinc-200 top-5 right-5 bg-slate-900 rounded-xl">
+                        <IoIosLogOut className="h-[20px] w-[20px] fill-[#A4A4A4]" />
+                    </button>
                 </div >
                 :
                 <div className="flex flex-col justify-center align-middle items-center bg-gradient-to-r from-gray-700 via-gray-900 to-black min-h-screen">

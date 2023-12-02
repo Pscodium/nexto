@@ -1,22 +1,27 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from './components/sidebar';
-import { ChildProps } from "../../middleware/authentication";
-import { UserProps } from "../../lib/api";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../services/firebase.config";
+import Loader from "../../common/Loader";
 
-interface DashboardProps extends ChildProps {}
+export default function Dashboard() {
 
-export interface DashboardOutletContextProps {
-    authUser: UserProps | undefined;
-}
+    const [user] = useAuthState(auth);
 
-export default function Dashboard({ authUser }: DashboardProps) {
     return (
         <div className="flex min-h-screen w-full">
-            <Sidebar width="250" />
-            <div className={`w-[calc(100%-250px)]`}>
-                <Outlet context={{ authUser }} />
-            </div>
+            {user ?
+                <>
+                    <Sidebar width="250" />
+                    <div className={`w-[calc(100%-250px)]`}>
+                        <Outlet />
+                    </div>
+                </>
+                :
+                <Loader />
+            }
+
         </div>
     );
 }

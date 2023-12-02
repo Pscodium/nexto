@@ -6,12 +6,13 @@ import { BlockPicker } from 'react-color';
 import { useNavigate } from "react-router-dom";
 import { IoIosLogOut } from 'react-icons/io';
 import './css/map.css';
-import { ChildProps } from "../../middleware/authentication";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../services/firebase.config";
+import Loader from "../../common/Loader";
 
-interface MapProps extends ChildProps {}
-
-export default function HomePage({ authUser }: MapProps) {
+export default function HomePage() {
     const [pinColor, setPinColor] = useState('#00ff00');
+    const [user] = useAuthState(auth);
     const [openPalette, setOpenPalette] = useState(false);
     const mapRef = useRef<Map>(null);
     const windowSize = useWindowSize();
@@ -54,24 +55,31 @@ export default function HomePage({ authUser }: MapProps) {
 
     return (
         <>
-            <MapHeader height={headerSize} />
-            <div style={{ height: windowSize.height ? windowSize.height - headerSize : 0 }} className={`justify-center align-middle w-[100vw] bg-slate-100 flex items-center`}>
-                <div className="flex w-[3vw] h-[100%] justify-center">
-                    <button className="h-[50px] w-[50px] flex items-center justify-center absolute bottom-1 hover:bg-zinc-200">
-                        <IoIosLogOut className="h-[20px] w-[20px] fill-[#464646]" />
-                    </button>
-                </div>
-                <div className=" bg-zinc-200 flex w-[97vw] h-[100%] justify-center items-center">
-                    {openPalette?
-                        <div className={`absolute top-[112px] left-[0px]`}>
-                            <BlockPicker colors={colors} color={pinColor} onChangeComplete={(color) => completeChangeColor(color.hex)} />
+            {user ?
+                <>
+                    <MapHeader height={headerSize} />
+                    <div style={{ height: windowSize.height ? windowSize.height - headerSize : 0 }} className={`justify-center align-middle w-[100vw] bg-slate-100 flex items-center`}>
+                        <div className="flex w-[3vw] h-[100%] justify-center">
+                            <button className="h-[50px] w-[50px] flex items-center justify-center absolute bottom-1 hover:bg-zinc-200">
+                                <IoIosLogOut className="h-[20px] w-[20px] fill-[#464646]" />
+                            </button>
                         </div>
-                        :
-                        null
-                    }
-                    <Map headerHeight={headerSize} windowSize={windowSize} pinColor={pinColor} ref={mapRef} goToLoginPage={goToLoginPage} openColorPicker={openColorPicker}/>
-                </div>
-            </div>
+                        <div className=" bg-zinc-200 flex w-[97vw] h-[100%] justify-center items-center">
+                            {openPalette ?
+                                <div className={`absolute top-[112px] left-[0px]`}>
+                                    <BlockPicker colors={colors} color={pinColor} onChangeComplete={(color) => completeChangeColor(color.hex)} />
+                                </div>
+                                :
+                                null
+                            }
+                            <Map headerHeight={headerSize} windowSize={windowSize} pinColor={pinColor} ref={mapRef} goToLoginPage={goToLoginPage} openColorPicker={openColorPicker}/>
+                        </div>
+                    </div>
+                </>
+                :
+                <Loader />
+            }
+
         </>
     );
 }
