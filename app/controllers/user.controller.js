@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 const { db } = require('../database/connection');
 const { uReqCleaner, uAdminReqCleaner } = require('../services/request.service');
 require('dotenv').config();
@@ -48,13 +49,40 @@ exports.getUserData = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
     try {
-        const users = await db.Users.findAll({
+        const query = req.query;
+        const page = query.page;
+        let includePerm = {
+            model: db.Permissions,
+            attributes: {
+                exclude: ['id', 'userId']
+            }
+        };
+        let queryObj = {
+            include: [
+                includePerm
+            ],
             attributes: {
                 exclude: ['password', 'permissionId']
             }
-        });
+        };
 
-        return res.status(200).json(users);
+        if (!req.is_master_admin) {
+            includePerm.attributes.exclude.push('master_admin_level');
+        }
+
+        if (page) {
+            const maxResults = query.limit || 10;
+            const offset = page * maxResults;
+
+            queryObj.limit = maxResults;
+            queryObj.offset = offset;
+        }
+
+        if (queryObj) {
+            const users = await db.Users.findAll(queryObj);
+
+            return res.status(200).json(users);
+        }
     } catch (err) {
         console.error(err);
         return res.status(500).json({ success: false });
@@ -77,6 +105,37 @@ exports.getUserById = async (req, res) => {
             return res.status(404).json({ success: false });
         }
         return res.status(200).json(user);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ success: false });
+    }
+};
+
+exports.getUserByExternalId = async (req, res) => {
+    try {
+        const { uid } = req.params;
+
+        const user = await db.Users.findOne({
+            where: {
+                external_id: uid
+            },
+            attributes: {
+                exclude: ['password', 'permissionId']
+            },
+            include: [
+                {
+                    model: db.Permissions,
+                    attributes: {
+                        exclude: ['id', 'userId']
+                    }
+                }
+            ]
+        });
+        if (!user) {
+            return res.status(404).json({ message: "Invalid Firebase ID" });
+        }
+
+        return res.json(user);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ success: false });

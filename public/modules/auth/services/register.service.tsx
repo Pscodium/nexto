@@ -1,5 +1,5 @@
 import React, { ComponentProps, useEffect, useState } from 'react';
-import { Button } from "../../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -7,11 +7,11 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "../../../components/ui/card";
-import { Input } from "../../../components/ui/input";
-import { Label } from "../../../components/ui/label";
-import { useToast } from '../../../components/ui/use-toast';
-import { Toaster } from '../../../components/ui/toaster';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from '@/components/ui/use-toast';
+import { Toaster } from '@/components/ui/toaster';
 import { BiArrowBack } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { authServiceApi } from './auth.service.api';

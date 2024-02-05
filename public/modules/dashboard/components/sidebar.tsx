@@ -2,7 +2,19 @@ import React, { useEffect, useState } from "react";
 import { MdSpaceDashboard } from 'react-icons/md';
 import { HiHome, HiUser } from "react-icons/hi2";
 import { NavLink, useLocation } from "react-router-dom";
-import Loader from "../../../common/Loader";
+import Loader from "@/common/Loader";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Button } from "@/components/ui/button";
+import { MdGTranslate, MdNotifications } from "react-icons/md";
+import { t } from "@/services/translate.config";
 
 interface SidebarProps {
     width: string;
@@ -11,6 +23,7 @@ interface SidebarProps {
 export default function Sidebar({ width }: SidebarProps) {
     const location = useLocation();
     const [isHome, setIsHome] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState('en');
 
     useEffect(() => {
         if (location.pathname === '/admin') {
@@ -19,6 +32,20 @@ export default function Sidebar({ width }: SidebarProps) {
             setIsHome(false);
         }
     }, [location]);
+
+    function setCurrentLanguage() {
+        const lang = t.getLocale();
+        setSelectedLanguage(lang);
+    }
+
+    useEffect(() => {
+        setCurrentLanguage();
+    }, []);
+
+    function handleSelectLanguage(language: string) {
+        setSelectedLanguage(language);
+        t.setLocale(language);
+    }
 
     return (
         <div className={`w-[250px] min-h-screen`}>
@@ -32,7 +59,7 @@ export default function Sidebar({ width }: SidebarProps) {
                         <div className="flex flex-col gap-3 items-center py-4">
                             <NavLink
                                 to=''
-                                className={ isHome ? 'bg-slate-600 p-3 w-[calc(100%-25px)] rounded-lg' : 'p-3 w-[calc(100%-25px)]'}
+                                className={isHome ? 'bg-slate-600 p-3 w-[calc(100%-25px)] rounded-lg' : 'p-3 w-[calc(100%-25px)]'}
                             >
                                 <div className="flex flex-row items-center gap-2">
                                     <HiHome className="fill-slate-100" />
@@ -54,6 +81,27 @@ export default function Sidebar({ width }: SidebarProps) {
                                     </span>
                                 </div>
                             </NavLink>
+                        </div>
+                    </div>
+                    <div className="absolute w-[250px] bottom-0 h-[80px] p-2">
+                        <div className="h-[100%] flex items-center justify-center align-middle border-t border-t-slate-600 gap-2">
+                            <Select onValueChange={(value) => handleSelectLanguage(value)} defaultValue={selectedLanguage}>
+                                <SelectTrigger className="border-slate-500 w-[100px] bg-slate-500" placeholder={t.translate('lang')}>
+                                    <SelectValue>
+                                        <MdGTranslate className="text-slate-100" />
+                                    </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent className="bg-slate-500 border-slate-500 shadow-lg">
+                                    <SelectGroup>
+                                        <SelectLabel>Languages</SelectLabel>
+                                        <SelectItem className="cursor-pointer hover:text-slate-600" value="pt">{t.translate('pt')}</SelectItem>
+                                        <SelectItem className="cursor-pointer hover:text-slate-600" value="en">{t.translate('en')}</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <Button className="bg-slate-500 hover:bg-slate-600">
+                                <MdNotifications className="text-slate-100" />
+                            </Button>
                         </div>
                     </div>
                 </div>

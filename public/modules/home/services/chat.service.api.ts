@@ -27,19 +27,20 @@ class ChatServiceApi extends Api {
 
     async sendMessage(chat: ChatProps) {
         await this.getToken();
-        try {
-            const res = await this.api.post('/chat/message', {
-                consecutive: chat.consecutive,
-                text: chat.text,
-                uid: chat.uid
-            });
 
-            if (res.status != 200) {
-                throw new InvalidChat("[Chat Error] - Invalid chat error!");
-            }
-        } catch (e) {
-            console.error(`[Chat Message Error] - ${e}`);
+        const res = await this.api.post('/chat/message', {
+            consecutive: chat.consecutive,
+            text: chat.text,
+            uid: chat.uid
+        });
+
+        if (res.status === 401) {
+            this.navigator('/login');
         }
+        if (res.status != 200) {
+            throw new InvalidChat("[Chat Error] - Invalid chat error!");
+        }
+
     }
 }
 export const chatService = new ChatServiceApi();

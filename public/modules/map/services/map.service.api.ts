@@ -42,7 +42,7 @@ class MapServiceApi extends Api {
         });
 
         if (res.status !== 200) {
-            throw new Error("Unexpected error creating map pin");
+            this.unexpectedError("Unexpected error creating map pin");
         }
 
         return res.data;
@@ -53,7 +53,7 @@ class MapServiceApi extends Api {
         const res = await this.api.get('/api/map/pins');
 
         if (res.status !== 200) {
-            throw new Error("Unexpected error creating map pin");
+            this.unexpectedError("Unexpected error creating map pin");
         }
 
         return res.data;
@@ -69,7 +69,7 @@ class MapServiceApi extends Api {
         });
 
         if (res.status !== 200) {
-            throw new Error("Unexpected error creating map pin");
+            this.unexpectedError("Unexpected error creating map pin");
         }
 
         return res.data;
@@ -77,14 +77,14 @@ class MapServiceApi extends Api {
 
     async updateMarkerPosition({ latitude, longitude, id }: UpdatePinProps) {
         await this.getToken();
-        const res = await this.api.put('/api/map/pin/'+ id, {
+        const res = await this.api.put('/api/map/pin/' + id, {
             latitude: latitude,
             longitude: longitude,
             area: null
         });
 
         if (res.status !== 200) {
-            throw new Error("Unexpected error creating map pin");
+            this.unexpectedError("Unexpected error creating map pin");
         }
 
         return res.data;
@@ -95,7 +95,7 @@ class MapServiceApi extends Api {
         const res = await this.api.delete('api/map/pin/'+ markerId);
 
         if (res.status !== 200) {
-            throw new Error("Unexpected error creating map pin");
+            this.unexpectedError("Unexpected error creating map pin");
         }
     }
 }

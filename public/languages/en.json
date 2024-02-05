@@ -1,0 +1,15 @@
+{
+  "master_admin_level": "Master Admin",
+  "can_manage_roles": "Manage Roles",
+  "can_manage_users": "Manage Users",
+  "can_delete_user": "Delete Users",
+  "can_add_user": "Add Users",
+  "can_edit_user": "Edit Users",
+  "can_access_dashboard": "Access Dashboard",
+  "can_see_map": "See Map",
+  "can_edit_map": "Edit Map",
+  "can_manage_users_permissions": "Manage Users Permissions",
+  "pt": "Portuguese",
+  "en": "English",
+  "lang": "Languages"
+}

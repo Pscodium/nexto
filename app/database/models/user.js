@@ -42,6 +42,11 @@ module.exports = function Users(sequelize) {
             defaultValue: ENUMS.UserRoles.DEFAULT,
             allowNull: true
         },
+        status: {
+            type: DataTypes.ENUM(ENUMS.values(ENUMS.UserStatus)),
+            defaultValue: ENUMS.UserStatus.ACTIVE,
+            allowNull: true
+        },
         firstName: {
             type: DataTypes.STRING,
             allowNull: false
