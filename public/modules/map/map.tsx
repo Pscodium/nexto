@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import MapHeader from "./map.header";
-import { useWindowSize } from "../../components/hooks/useWindowSize";
+import { useWindowSize } from "@/components/hooks/useWindowSize";
 import Map from "./services/map.service";
 import { BlockPicker } from 'react-color';
 import { useNavigate } from "react-router-dom";
 import { IoIosLogOut } from 'react-icons/io';
 import './css/map.css';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../services/firebase.config";
-import Loader from "../../common/Loader";
+import { auth } from "@/services/firebase.config";
+import Loader from "@/common/Loader";
 
 export default function HomePage() {
     const [pinColor, setPinColor] = useState('#00ff00');

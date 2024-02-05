@@ -19,8 +19,6 @@ class FirebaseService {
         this.auth = this.firebase.auth();
     }
 
-
-
     /**
 	 * @typedef User
 	 * @property {number} id

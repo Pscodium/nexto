@@ -9,12 +9,12 @@ import 'leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet/dist/leaflet.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { WindowSizeProps } from '../../../components/hooks/useWindowSize';
+import { WindowSizeProps } from '@/components/hooks/useWindowSize';
 import { MapIcon } from './map.icon.service';
 import { Area, CreatePinProps, mapServiceApi } from './map.service.api';
 
 import '../css/map.css';
-import { InvalidBearerToken } from '../../../lib/api';
+import { InvalidBearerToken } from '@/lib/api';
 
 export interface MapContainerProps {
     headerHeight: number;

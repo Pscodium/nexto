@@ -1,8 +1,11 @@
+/* eslint-disable no-sync */
 require('dotenv').config();
 process.env.PRE_SYNC_DATABASE = true;
 const disabled_logs = process.env.DISABLED_LOGS;
 const { db } = require('./database/connection');
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
 const { Router } = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -12,6 +15,8 @@ const logger = require('./services/logs.service');
 const { logs } = require('./middleware/logs');
 const authentication = require('./middleware/authentication');
 const app = express();
+const privateKey = fs.readFileSync('app/ssl/server.key');
+const certificate = fs.readFileSync('app/ssl/server.cert');
 
 function start() {
     try {
@@ -32,6 +37,12 @@ function start() {
                     app.use(logs);
                     app.use(routes);
 
+                    https
+                        .createServer({
+                            key: privateKey,
+                            cert: certificate
+                        }, app)
+                        .listen(8000);
                     app.listen(3000);
 
                     if (!disabled_logs) {

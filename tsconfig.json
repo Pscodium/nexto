@@ -27,11 +27,16 @@
         "name": "vite"
       }
     ],
+    "paths": {
+      "@/*": ["./public/*"]
+    },
     "typeRoots": ["./public/@types", "./public/node_modules/@types"]
   },
   "include": [
     "./public/src",
     "./public/src/*.ts",
+    "./public/**/*.tsx",
+    "./public/**/**/*.tsx",
     "./public/**/*.ts",
     "./public/*.ts",
     "**/*.ts",
@@ -40,8 +45,5 @@
   "exclude": [
     "node_modules",
     "app"
-  ],
-  "paths": {
-    "@/*": ["./public/src/*"]
-  }
+  ]
 }

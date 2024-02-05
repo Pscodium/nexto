@@ -102,7 +102,7 @@ describe('Users Tests', () => {
         expect(res.statusCode).equals(404);
     });
 
-    it("Tring to register an existing user", async () => {
+    it("Trying to register an existing user", async () => {
         res = await this.another_agent.post('/register').send({
             "email": "test@email.com",
             "password": '12312412341'

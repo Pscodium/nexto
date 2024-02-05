@@ -33,7 +33,7 @@ class AuthServiceApi extends Api {
         }
 
         if (res.status !== 200) {
-            throw new Error("Unexpected error creating account");
+            this.unexpectedError('Unexpected error creating account');
         }
 
         return res.data;
@@ -46,7 +46,7 @@ class AuthServiceApi extends Api {
         });
 
         if (res.status !== 200) {
-            throw new Error("Unexpected error logging account");
+            this.unexpectedError('Unexpected error logging account');
         }
 
         if (res.data.token) {

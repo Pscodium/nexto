@@ -11,7 +11,6 @@ import routes from '../routes/index';
 
 const Dashboard = lazy(() => import('../modules/dashboard/dashboard'));
 import DashboardHome from '../modules/dashboard/pages/home';
-import Authenticate from '../middleware/authentication';
 
 export default function Router() {
     const [loading, setLoading] = useState<boolean>(true);

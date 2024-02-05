@@ -28,6 +28,17 @@ async function load() {
             isAdmin: false
         });
 
+        // for (let i = 0; i < 50; i++) {
+        //     await createUser({
+        //         email: `test${i}@email.com`,
+        //         firstName: 'Test',
+        //         lastName: 'Dev',
+        //         password: '123456',
+        //         nickname: `Tester_${i}`,
+        //         isAdmin: false
+        //     });
+        // }
+
 
         console.log(logger.changed('Created users on script: ' + addedUsers))
         console.log(logger.success('\n\nDatabase sucessfully loaded...'));

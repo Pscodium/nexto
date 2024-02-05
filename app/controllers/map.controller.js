@@ -86,12 +86,16 @@ exports.updatePinById = async (req, res) => {
 
 exports.deletePinById = async (req, res) => {
     try {
-        await db.Map.destroy({
+        const pin = await db.Map.findOne({
             where: {
-                id: req.params.id,
-                userId: req.userId
+                id: req.params.id
             }
         });
+
+        if (!pin) {
+            return res.status(404).json({ success: false });
+        }
+        await pin.destroy();
 
         return res.status(200).json({ success: true });
     } catch (err) {

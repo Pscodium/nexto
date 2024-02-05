@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
-import { Card } from '../../components/ui/card';
+import { Card } from '@/components/ui/card';
 import { useNavigate } from "react-router-dom";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { IoIosLogOut, IoMdSend } from 'react-icons/io';
 import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { auth, databaseApp } from "../../services/firebase.config";
+import { auth, databaseApp } from "@/services/firebase.config";
 import { TailSpin } from 'react-loader-spinner';
 import { collection, limit, orderBy, query } from "firebase/firestore";
 import ChatMessage, { MessageProps } from './components/chatMessage';
-import { InvalidBearerToken, UserProps, api } from "../../lib/api";
+import { UserProps, api } from "@/lib/api";
 import { chatService } from './services/chat.service.api';
 
 export default function Home() {
@@ -35,16 +35,9 @@ export default function Home() {
     }, [messages]);
 
     async function getUser() {
-        try {
-            const res = await api.getUserData();
-            if (res) {
-                setReqUser(res);
-            }
-        } catch (err) {
-            if (err instanceof InvalidBearerToken) {
-                navigate('/login');
-            }
-            console.error(err);
+        const res = await api.getUserData();
+        if (res) {
+            setReqUser(res);
         }
     }
 
@@ -99,7 +92,7 @@ export default function Home() {
 
     return (
         <div>
-            {user || loading ?
+            {user ?
                 <div className="flex flex-col justify-center align-middle items-center bg-gradient-to-r from-gray-700 via-gray-900 to-black min-h-screen">
                     <Card className='w-[70vw] h-[70vh] rounded-xl overflow-hidden bg-slate-700 border-slate-700 relative'>
                         <div className="flex flex-col justify-between h-full w-full">
