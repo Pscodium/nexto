@@ -162,4 +162,4 @@ next-env.d.ts
 app/utils/scripts/credentials.json
 
 # ssl certificate
-app/ssl/
+/app/ssl/
