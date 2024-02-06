@@ -160,3 +160,6 @@ next-env.d.ts
 
 # firebase credentials
 app/utils/scripts/credentials.json
+
+# ssl certificate
+app/ssl/
