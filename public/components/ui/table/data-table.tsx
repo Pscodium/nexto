@@ -31,6 +31,8 @@ import {
 import React from "react";
 import { ChevronDown } from "lucide-react";
 import { BsPersonPlus } from "react-icons/bs";
+import { t } from "../../../services/translate.config";
+
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -90,7 +92,7 @@ export function DataTable<TData, TValue>({
         <div className="rounded-md border">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Search"
+                    placeholder={t.translate('search')}
                     value={globalFilter}
                     onChange={(event) =>
                         setGlobalFilter(event.target.value)
@@ -100,7 +102,7 @@ export function DataTable<TData, TValue>({
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto mr-10 border-slate-200 hover:bg-slate-200">
-                            Columns <ChevronDown className="ml-2 h-4 w-4" />
+                            {t.translate('columns')} <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="bg-slate-50" align="end">
@@ -167,7 +169,7 @@ export function DataTable<TData, TValue>({
                     ) : (
                         <TableRow>
                             <TableCell colSpan={columns.length} className="h-24 text-center">
-                                No results.
+                                {t.translate('no_results')}
                             </TableCell>
                         </TableRow>
                     )}
@@ -181,7 +183,7 @@ export function DataTable<TData, TValue>({
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
                 >
-                    Previous
+                    {t.translate('previous')}
                 </Button>
                 <Button
                     variant="outline"
@@ -190,7 +192,7 @@ export function DataTable<TData, TValue>({
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
                 >
-                    Next
+                    {t.translate('next')}
                 </Button>
             </div>
         </div>
