@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import FloatingLabelInput from '@/components/ui/floating-label';
+import { t } from "../../../services/translate.config";
 
 interface UserDialogProps {
     value: RegisterProps;
@@ -72,9 +73,9 @@ export default function UserRegistrationDialog({ setValue, value, show, createUs
     return (
         <Dialog open={show} onOpenChange={setShow}>
             <DialogContent className="bg-white">
-                <DialogTitle className="text-[24px]">User Registration</DialogTitle>
+                <DialogTitle className="text-[24px]">{t.translate('user_registration')}</DialogTitle>
                 <DialogDescription className="text-[12px] flex flex-col">
-                    Create a new user.
+                    {t.translate('create_new_user')}
                     {!validPassword && (
                         <em className="text-[12px] text-red-500">A minimum 8 characters password contains a combination of <strong>uppercase and lowercase letter</strong> and <strong>number</strong>.</em>
                     )}

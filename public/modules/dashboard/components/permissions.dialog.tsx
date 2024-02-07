@@ -47,9 +47,9 @@ export default function PermissionDialog({ selectedUserDialog, selectedUserPerms
             {selectedUserDialog && selectedUserPerms && (
                 <Dialog open={showPermissionsDialog} onOpenChange={setShowPermissionsDialog}>
                     <DialogContent className="bg-white">
-                        <DialogTitle className="text-[24px]">User Permissions</DialogTitle>
+                        <DialogTitle className="text-[24px]">{t.translate('user_permission')}</DialogTitle>
                         <DialogDescription className="text-[12px]">
-                            Make changes to user profile here. Click save when you're done.
+                           {t.translate('change_user_permission')}
                         </DialogDescription>
                         <div className="py-4 flex flex-col">
                             {Object.keys(selectedUserPerms).map((permission) => {
