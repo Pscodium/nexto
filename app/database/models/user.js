@@ -59,6 +59,11 @@ module.exports = function Users(sequelize) {
             type: DataTypes.STRING,
             allowNull: false
         },
+        verifiedEmail: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
         password: {
             type: DataTypes.STRING,
             allowNull: false

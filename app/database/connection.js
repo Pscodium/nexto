@@ -5,6 +5,7 @@ const { Sequelize, ModelStatic, Model } = require('sequelize');
 const Users = require('./models/user');
 const Session = require('./models/session');
 const Map = require('./models/map');
+const Crash = require('./models/crash');
 const Permissions = require('./models/permissions');
 const logger = require('../services/logs.service');
 const pre_sync_database = process.env.PRE_SYNC_DATABASE;
@@ -36,7 +37,8 @@ function createDbObject(sequelize) {
         Users: Users(sequelize),
         Session: Session(sequelize),
         Map: Map(sequelize),
-        Permissions: Permissions(sequelize)
+        Permissions: Permissions(sequelize),
+        Crash: Crash(sequelize)
     };
 }
 const db = createDbObject(sequelize);
