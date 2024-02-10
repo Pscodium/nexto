@@ -96,6 +96,20 @@ exports.highProb = async () => {
     return multi;
 };
 
+/**
+ *
+ * @param {() => Promise<number>} probFn
+ * @returns
+ */
+exports.probabilityToGetNumberOne = async (probFn) => {
+    // este é um callback que retorna um número, ele recebe uma função que retorna um número probabilístico e ele retorna ou essa função ou o número 1
+    const prob = Math.floor(Math.random() * 10); // Aqui eu crio a probabilidade de 1 à cada 5 (altere este valor para aumentar ou diminuir a probabilidade)
+    if (prob == 5) {
+        return 1;
+    }
+    return await probFn();
+};
+
 exports.shuffleArray = async (array) => {
     const shuffledList = [];
 
