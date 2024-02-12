@@ -1,11 +1,11 @@
 const { db } = require('../../database/connection');
-const { MailTransfer } = require('../../services/mail.service');
+const { mailer } = require('../../services/mail.service');
 const logger = require('../../services/logs.service');
 
 class MailSender {
 
     constructor() {
-        this.mailer = new MailTransfer();
+        this.mailer = mailer;
         this.sending = false;
     }
 

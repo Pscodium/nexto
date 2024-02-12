@@ -16,6 +16,7 @@ class MailTransfer {
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
         });
+        this.sentEmails = [];
     }
 
     /**
@@ -44,8 +45,16 @@ class MailTransfer {
             }).promise();
 
         if (emailSent.MessageId) {
-            console.log(logger.success(`\nEmail successfully sent to ${email.to}\nID: ${emailSent.MessageId}\n`));
+            this.sentEmails.push({
+                messageId: emailSent.MessageId,
+                email: {
+                    to: email.to,
+                    subject: email.subject,
+                    html: email.html
+                }
+            });
+            return console.log(logger.success(`\nEmail successfully sent to ${email.to}\nID: ${emailSent.MessageId}\n`));
         }
     }
 }
-exports.MailTransfer = MailTransfer;
+exports.mailer = new MailTransfer();
